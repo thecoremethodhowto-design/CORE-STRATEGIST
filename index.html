@@ -3,90 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE CORE METHOD | CORE STRATEGIST</title>
-    
+    <title>CORE STRATEGIST | @THECOREMETHOD</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#00FFFF">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="apple-mobile-web-app-title" content="Strategist">
-    <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
-
     <style>
         :root { --neon: #00FFFF; --bg: #000; --text: #e0e0e0; }
-        body { background: var(--bg); color: var(--text); font-family: 'Courier New', Courier, monospace; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
-        .container { width: 100%; max-width: 650px; text-align: center; border: 2px solid var(--neon); padding: 30px; box-shadow: 0 0 30px rgba(0, 255, 255, 0.1); border-radius: 12px; background: #050505; }
-        .logo img { width: 100px; margin-bottom: 15px; }
-        h1 { color: var(--neon); letter-spacing: 5px; font-size: 1.2rem; margin: 10px 0; }
-        .slogan { color: #666; font-size: 0.65rem; text-transform: uppercase; margin-bottom: 25px; }
+        body { background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; display: flex; justify-content: center; padding: 20px; margin: 0; }
+        .container { width: 100%; max-width: 650px; text-align: center; border: 2px solid var(--neon); padding: 25px; border-radius: 12px; background: #050505; }
+        h1 { color: var(--neon); letter-spacing: 5px; font-size: 1.2rem; }
+        select, textarea { width: 100%; padding: 12px; margin-bottom: 20px; background: #000; border: 1px solid #333; color: var(--neon); font-family: inherit; box-sizing: border-box; }
+        button { width: 100%; padding: 18px; background: none; border: 2px solid var(--neon); color: var(--neon); font-weight: bold; cursor: pointer; transition: 0.4s; }
+        button:hover { background: var(--neon); color: #000; box-shadow: 0 0 15px var(--neon); }
+        #response { margin-top: 25px; text-align: left; line-height: 1.6; color: #fff; font-size: 0.9rem; border-bottom: 2px dashed #222; padding-bottom: 20px; }
         
-        /* Status Bar */
-        .status-bar { background: rgba(0, 255, 255, 0.05); border: 1px solid var(--neon); padding: 10px; margin-bottom: 20px; font-size: 0.7rem; border-radius: 4px; color: var(--neon); text-transform: uppercase; letter-spacing: 1px; display: flex; justify-content: space-between; align-items: center; }
-        .status-online { font-weight: bold; }
-        .lang-indicator { color: #fff; opacity: 0.8; font-size: 0.6rem; }
-        
-        .install-guide { font-size: 0.7rem; color: #888; margin-bottom: 20px; line-height: 1.5; border-bottom: 1px solid #222; padding-bottom: 15px; text-align: left; }
-        
-        label { display: block; text-align: left; font-size: 0.75rem; color: var(--neon); margin-bottom: 8px; font-weight: bold; }
-        select, textarea { width: 100%; padding: 12px; margin-bottom: 20px; background: #000; border: 1px solid #333; color: var(--neon); border-radius: 4px; font-family: inherit; box-sizing: border-box; font-size: 0.9rem; }
-        button { width: 100%; padding: 18px; background: none; border: 2px solid var(--neon); color: var(--neon); font-weight: bold; cursor: pointer; transition: 0.4s; letter-spacing: 2px; text-transform: uppercase; }
-        button:hover { background: var(--neon); color: #000; box-shadow: 0 0 20px var(--neon); }
-        
-        #response { margin-top: 25px; padding: 15px; border-top: 1px solid #222; text-align: left; line-height: 1.6; white-space: pre-wrap; font-size: 0.9rem; color: #fff; min-height: 50px; }
-        
-        /* History Archive */
-        .history-box { margin-top: 40px; border-top: 2px dashed #222; padding-top: 20px; text-align: left; }
-        .history-item { border: 1px solid #1a1a1a; padding: 15px; margin-bottom: 10px; background: #020202; font-size: 0.85rem; border-left: 3px solid var(--neon); }
-        .history-date { color: var(--neon); font-size: 0.7rem; margin-bottom: 5px; opacity: 0.7; font-weight: bold; }
-        .clear-btn { background: none; border: 1px solid #444; color: #666; padding: 8px 15px; font-size: 0.65rem; cursor: pointer; margin-top: 10px; width: auto; text-transform: uppercase; }
+        /* ARCHIVE STYLES */
+        .history-box { margin-top: 30px; text-align: left; }
+        .history-item { border-left: 3px solid var(--neon); background: #0a0a0a; padding: 15px; margin-bottom: 15px; position: relative; }
+        .history-header { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--neon); margin-bottom: 8px; font-weight: bold; }
+        .history-input { color: #888; font-style: italic; font-size: 0.75rem; margin-bottom: 10px; border-bottom: 1px solid #1a1a1a; padding-bottom: 5px; }
+        .del-btn { color: #ff4444; border: 1px solid #ff4444; background: none; padding: 2px 8px; cursor: pointer; font-size: 0.6rem; width: auto; }
+        .clear-all { background: none; border: 1px solid #444; color: #666; padding: 5px 15px; font-size: 0.6rem; cursor: pointer; float: right; }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="status-bar">
-            <span class="status-online">[ SYSTEM ONLINE ]</span>
-            <span class="lang-indicator">MULTI-LANGUAGE CORE ACTIVE (TR/EN/DE/FR)</span>
-        </div>
-        
-        <div class="install-guide">
-            <strong>SYSTEM DEPLOYMENT:</strong> To install as a standalone app, access browser menu and select <strong>"Add to Home Screen"</strong>.<br><br>
-            <strong>INTELLIGENCE ADVISORY:</strong> Input signals in any language. The strategist will respond with professional depth in the same language.
-        </div>
-
-        <div class="logo">
-            <img src="https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=1440,h=1504,fit=crop/fysh94jQ56cgrcdf/logo-dmooxvni4pk0hyyh.png" alt="Logo">
-            <h1>CORE STRATEGIST</h1>
-            <div class="slogan">Senior Logic Gate Engine | @THECOREMETHOD</div>
-        </div>
-
-        <label>> SELECT EXPERT LENS:</label>
+        <h1>CORE STRATEGIST</h1>
         <select id="expertRole">
             <option value="VC Analyst">VC Analyst (Stress Test)</option>
             <option value="Fractional COO">Fractional COO (Execution Plan)</option>
             <option value="Growth Operator">Growth Operator (Scale Logic)</option>
         </select>
-
-        <label>> INPUT STRATEGY SIGNAL:</label>
-        <textarea id="userInput" rows="4" placeholder="Define your goal, constraints, or strategic query..."></textarea>
-
+        <textarea id="userInput" rows="4" placeholder="Sinyal girişi yapın..."></textarea>
         <button id="execBtn" onclick="executeAnalysis()">EXECUTE SENIOR ANALYSIS</button>
-
-        <div id="response">Awaiting input signal...</div>
+        <div id="response">Waiting for signal...</div>
 
         <div class="history-box">
-            <label>> SIGNAL ARCHIVE (LOCAL PERSISTENCE):</label>
-            <div id="historyList">No archived signals detected.</div>
-            <button class="clear-btn" onclick="clearHistory()">PURGE ARCHIVE</button>
+            <button class="clear-all" onclick="clearHistory()">PURGE ARCHIVE</button>
+            <h3 style="color:var(--neon); font-size:0.8rem;">> SIGNAL ARCHIVE</h3>
+            <div id="historyList"></div>
         </div>
     </div>
 
     <script>
-        window.addEventListener('load', () => {
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('./sw.js').then(reg => console.log('Gate Active'));
-            }
-            loadHistory();
-        });
+        window.onload = loadHistory;
 
         async function executeAnalysis() {
             const btn = document.getElementById('execBtn');
@@ -94,54 +53,58 @@
             const input = document.getElementById('userInput').value;
             const role = document.getElementById('expertRole').value;
 
-            if (!input.trim()) return alert("Error: Signal input required.");
-
-            btn.innerText = "ANALYZING...";
+            if (!input.trim()) return alert("Sinyal gerekli.");
             btn.disabled = true;
-            resDiv.innerText = "Connecting to Logic Gate Engine (Deep Analysis Mode)...";
-
-            // PROMPT ENHANCEMENT: Bu kısım zekayı artıran "gizli" talimattır.
-            const enhancedInput = `
-                PROTOCOL: HIGH-LEVEL STRATEGIC AUDIT.
-                USER SIGNAL: ${input}
-                INSTRUCTION: Do not provide brief answers. Provide a deep-dive, multi-paragraph professional analysis. 
-                Focus on 'The Core Method' pillars. Break down the logic, the moats, and the execution risk.
-            `;
+            resDiv.innerText = "Analyzing...";
 
             try {
                 const response = await fetch("https://thecoremethodhowto-backend.onrender.com/chat", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ user_input: enhancedInput, expert_role: role })
+                    body: JSON.stringify({ user_input: input, expert_role: role })
                 });
-
                 const data = await response.json();
-                const resultText = data.response || "Error: Engine Timeout.";
-                
-                // Markdown benzeri yapıyı web'e uyarlamak için \n -> <br> dönüşümü
-                resDiv.innerHTML = resultText.replace(/\n/g, '<br>');
-
-                saveToHistory(role, input, resultText);
+                const output = data.response;
+                resDiv.innerHTML = output.replace(/\n/g, '<br>');
+                saveToHistory(role, input, output);
             } catch (err) {
-                resDiv.innerText = "System Wake-up: The engine is initializing. Please retry in 20 seconds.";
+                resDiv.innerText = "Engine Wake-up... Retry in 20s.";
             } finally {
-                btn.innerText = "EXECUTE SENIOR ANALYSIS";
                 btn.disabled = false;
             }
         }
 
         function saveToHistory(role, input, output) {
             let history = JSON.parse(localStorage.getItem('coreHistory') || '[]');
-            const newEntry = {
-                date: new Date().toLocaleString(),
-                role: role,
-                output: output
-            };
-            history.unshift(newEntry);
-            if (history.length > 10) history.pop();
-            localStorage.setItem('coreHistory', JSON.stringify(history));
+            history.unshift({ id: Date.now(), role, input, output, date: new Date().toLocaleString() });
+            localStorage.setItem('coreHistory', JSON.stringify(history.slice(0, 10)));
             loadHistory();
         }
 
         function loadHistory() {
-            const historyList = document.getElementById('history
+            const list = document.getElementById('historyList');
+            const history = JSON.parse(localStorage.getItem('coreHistory') || '[]');
+            list.innerHTML = history.map(item => `
+                <div class="history-item">
+                    <div class="history-header">
+                        <span>[${item.date}] LENS: ${item.role}</span>
+                        <button class="del-btn" onclick="deleteItem(${item.id})">DELETE</button>
+                    </div>
+                    <div class="history-input">Input: "${item.input.substring(0,60)}..."</div>
+                    <div style="font-size:0.8rem; opacity:0.9;">${item.output.substring(0,200).replace(/\n/g, '<br>')}...</div>
+                </div>
+            `).join('');
+        }
+
+        function deleteItem(id) {
+            let history = JSON.parse(localStorage.getItem('coreHistory') || '[]');
+            localStorage.setItem('coreHistory', JSON.stringify(history.filter(i => i.id !== id)));
+            loadHistory();
+        }
+
+        function clearHistory() {
+            if(confirm("Tüm arşiv silinsin mi?")) { localStorage.removeItem('coreHistory'); loadHistory(); }
+        }
+    </script>
+</body>
+</html>
