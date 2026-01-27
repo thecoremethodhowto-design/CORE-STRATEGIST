@@ -20,7 +20,7 @@
         h1 { color: var(--neon); letter-spacing: 5px; font-size: 1.2rem; margin: 10px 0; }
         .slogan { color: #666; font-size: 0.65rem; text-transform: uppercase; margin-bottom: 25px; }
         
-        /* Status Bar with Language Indicator */
+        /* Status Bar */
         .status-bar { background: rgba(0, 255, 255, 0.05); border: 1px solid var(--neon); padding: 10px; margin-bottom: 20px; font-size: 0.7rem; border-radius: 4px; color: var(--neon); text-transform: uppercase; letter-spacing: 1px; display: flex; justify-content: space-between; align-items: center; }
         .status-online { font-weight: bold; }
         .lang-indicator { color: #fff; opacity: 0.8; font-size: 0.6rem; }
@@ -81,15 +81,21 @@
     </div>
 
     <script>
-        // PWA Service Worker
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js').then(reg => console.log('Gate Active'));
-            });
-        }
+        // --- CRITICAL SYSTEM INITIALIZATION ---
+        // Unified event listener for both PWA and History to avoid conflicts
+        window.addEventListener('load', () => {
+            // 1. Register PWA Service Worker
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('Gate Active: Service Worker Registered'))
+                    .catch(err => console.error('Gate Error: Worker registration failed', err));
+            }
+            
+            // 2. Initialize Signal History
+            loadHistory();
+        });
 
-        window.onload = loadHistory;
-
+        // --- ANALYSIS EXECUTION ENGINE ---
         async function executeAnalysis() {
             const btn = document.getElementById('execBtn');
             const resDiv = document.getElementById('response');
@@ -102,47 +108,4 @@
             btn.disabled = true;
             resDiv.innerText = "Connecting to Logic Gate...";
 
-            try {
-                const response = await fetch("https://thecoremethodhowto-backend.onrender.com/chat", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ user_input: input, expert_role: role })
-                });
-
-                const data = await response.json();
-                const resultText = data.response || "Error: Engine Timeout.";
-                resDiv.innerText = resultText;
-
-                saveToHistory(role, input, resultText);
-            } catch (err) {
-                resDiv.innerText = "System Wake-up: The engine is initializing. Please retry in 20 seconds.";
-            } finally {
-                btn.innerText = "EXECUTE SENIOR ANALYSIS";
-                btn.disabled = false;
-            }
-        }
-
-        function saveToHistory(role, input, output) {
-            let history = JSON.parse(localStorage.getItem('coreHistory') || '[]');
-            const newEntry = {
-                date: new Date().toLocaleString(),
-                role: role,
-                output: output
-            };
-            history.unshift(newEntry);
-            if (history.length > 10) history.pop();
-            localStorage.setItem('coreHistory', JSON.stringify(history));
-            loadHistory();
-        }
-
-        function loadHistory() {
-            const historyList = document.getElementById('historyList');
-            const history = JSON.parse(localStorage.getItem('coreHistory') || '[]');
-            if (history.length === 0) return;
-            historyList.innerHTML = history.map(item => `
-                <div class="history-item">
-                    <div class="history-date">[${item.date}] LENS: ${item.role}</div>
-                    <div>${item.output}</div>
-                </div>
-            `).join('');
-        }
+            try
