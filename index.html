@@ -95,24 +95,26 @@
             const input = document.getElementById('userInput').value;
             const role = document.getElementById('expertRole').value;
 
-            if (!input.trim()) return alert("Error: Signal input required.");
+            if (!input.trim()) return alert("Signal input required.");
 
-            btn.innerText = "ANALYZING...";
+            btn.innerText = "ANALYZING SIGNAL...";
             btn.disabled = true;
-            resDiv.innerText = "Connecting to Logic Gate...";
+            resDiv.innerText = "Connecting to Logic Gate Engine...";
 
             try {
                 const response = await fetch("https://thecoremethodhowto-backend.onrender.com/chat", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ user_input: input, expert_role: role })
+                    body: JSON.stringify({ 
+                        user_input: input + " (IMPORTANT: Provide a detailed, deep-dive professional analysis with execution steps. Do not be brief.)",
+                        expert_role: role 
+                    })
                 });
 
                 const data = await response.json();
-                const resultText = data.response || "Error: Engine Timeout.";
-                resDiv.innerText = resultText;
-
-                saveToHistory(role, input, resultText);
+                resDiv.innerHTML = (data.response ? data.response.replace(/\n/g, '<br>') : "Error: Engine Timeout.");
+        
+                saveToHistory(role, input, data.response)
             } catch (err) {
                 resDiv.innerText = "System Wake-up: The engine is initializing. Please retry in 20 seconds.";
             } finally {
