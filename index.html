@@ -7,17 +7,17 @@
     <link rel="manifest" href="manifest.json">
     <style>
         :root { --neon: #00FFFF; --bg: #000; --text: #e0e0e0; }
-        body { background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; display: flex; justify-content: center; padding: 20px; margin: 0; }
-        .container { width: 100%; max-width: 650px; text-align: center; border: 2px solid var(--neon); padding: 25px; border-radius: 12px; background: #050505; box-shadow: 0 0 20px rgba(0, 255, 255, 0.1); }
-        h1 { color: var(--neon); letter-spacing: 5px; font-size: 1.4rem; text-transform: uppercase; margin-bottom: 30px; }
-        select, textarea { width: 100%; padding: 15px; margin-bottom: 20px; background: #000; border: 1px solid #333; color: var(--neon); font-family: inherit; box-sizing: border-box; font-size: 0.9rem; outline: none; }
-        select:focus, textarea:focus { border-color: var(--neon); }
-        button { width: 100%; padding: 20px; background: none; border: 2px solid var(--neon); color: var(--neon); font-weight: bold; cursor: pointer; transition: 0.4s; letter-spacing: 2px; }
+        body { background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; padding: 20px; margin: 0; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 650px; border: 2px solid var(--neon); padding: 30px; background: #050505; box-shadow: 0 0 40px rgba(0, 255, 255, 0.05); }
+        h1 { color: var(--neon); letter-spacing: 7px; font-size: 1.4rem; text-align: center; margin-bottom: 40px; border-bottom: 1px solid #1a1a1a; padding-bottom: 20px; }
+        select, textarea { width: 100%; padding: 15px; margin-bottom: 25px; background: #000; border: 1px solid #333; color: var(--neon); font-family: inherit; font-size: 0.9rem; outline: none; box-sizing: border-box; }
+        textarea:focus { border-color: var(--neon); }
+        button { width: 100%; padding: 22px; background: none; border: 2px solid var(--neon); color: var(--neon); font-weight: bold; cursor: pointer; transition: 0.3s; letter-spacing: 2px; text-transform: uppercase; }
         button:hover { background: var(--neon); color: #000; box-shadow: 0 0 25px var(--neon); }
-        #response { margin-top: 30px; text-align: left; line-height: 1.6; color: #fff; font-size: 0.95rem; border-bottom: 2px dashed #222; padding-bottom: 20px; }
-        .archive-section { margin-top: 40px; text-align: left; border-top: 1px solid #222; padding-top: 20px; }
-        .history-item { border-left: 3px solid var(--neon); background: #0a0a0a; padding: 15px; margin-bottom: 15px; }
-        .del-btn { color: #ff4444; border: 1px solid #ff4444; background: none; padding: 4px 10px; cursor: pointer; font-size: 0.65rem; float: right; }
+        #response { margin-top: 40px; text-align: left; line-height: 1.7; font-size: 0.95rem; }
+        .archive-section { margin-top: 60px; border-top: 1px solid #222; padding-top: 25px; }
+        .history-item { border-left: 2px solid var(--neon); background: #080808; padding: 20px; margin-bottom: 20px; position: relative; }
+        .del-btn { position: absolute; right: 15px; top: 15px; color: #ff4444; border: 1px solid #ff4444; background: none; font-size: 0.65rem; cursor: pointer; padding: 4px 10px; }
     </style>
 </head>
 <body>
@@ -25,20 +25,20 @@
         <h1>CORE STRATEGIST</h1>
         
         <select id="expertRole">
-            <option value="VC Analyst">VC Analyst (Stress Test)</option>
-            <option value="Fractional COO">Fractional COO (Execution Plan)</option>
-            <option value="Growth Operator">Growth Operator (Scale Logic)</option>
+            <option value="VC Analyst">VC Analyst (Market & Moat Audit)</option>
+            <option value="Fractional COO">Fractional COO (Ops & Systems Audit)</option>
+            <option value="Growth Operator">Growth Operator (Scale & Tech Audit)</option>
         </select>
 
-        <textarea id="userInput" rows="5" placeholder="Input strategic signal... (Context, Constraints, Goals)"></textarea>
+        <textarea id="userInput" rows="6" placeholder="INPUT STRATEGIC SIGNAL... (Provide Context, Constraints, and Target Pillars)"></textarea>
 
         <button id="execBtn" onclick="executeAnalysis()">EXECUTE STRATEGIC AUDIT</button>
 
-        <div id="response">Waiting for signal...</div>
+        <div id="response">SYSTEM READY. WAITING FOR SIGNAL...</div>
 
         <div class="archive-section">
-            <button onclick="clearHistory()" style="width:auto; padding:5px 10px; font-size:0.6rem; float:right; border-color:#444; color:#666;">PURGE ALL</button>
-            <h3 style="color:var(--neon); font-size:0.8rem; margin-bottom:20px;">> SIGNAL ARCHIVE</h3>
+            <button onclick="clearHistory()" style="width:auto; float:right; border:none; color:#444; font-size:0.6rem; cursor:pointer;">PURGE ARCHIVE</button>
+            <h3 style="color:var(--neon); font-size:0.8rem; letter-spacing:2px;">> SIGNAL ARCHIVE</h3>
             <div id="historyList"></div>
         </div>
     </div>
@@ -52,11 +52,11 @@
             const input = document.getElementById('userInput').value;
             const role = document.getElementById('expertRole').value;
 
-            if (!input.trim()) return alert("Strategic signal required.");
+            if (!input.trim()) return;
             
             btn.disabled = true;
-            btn.innerText = "CALIBRATING...";
-            resDiv.innerText = "Strategic Alignment Process Initialized. Please allow a moment for precision processing...";
+            btn.innerText = "CALIBRATING SIGNAL...";
+            resDiv.innerHTML = "<em>Initializing Compass Protocol... Accessing real-time market data and calibrating 9-Pillar architecture. Please wait...</em>";
 
             try {
                 const response = await fetch("https://thecoremethodhowto-backend.onrender.com/chat", {
@@ -68,7 +68,7 @@
                 resDiv.innerHTML = data.response.replace(/\n/g, '<br>');
                 saveToHistory(role, input, data.response);
             } catch (err) {
-                resDiv.innerText = "Connection Drift: Retrying protocol...";
+                resDiv.innerText = "PROTOCOL DRIFT: Connection to Logic Gate lost.";
             } finally {
                 btn.disabled = false;
                 btn.innerText = "EXECUTE STRATEGIC AUDIT";
@@ -88,9 +88,9 @@
             list.innerHTML = history.map(item => `
                 <div class="history-item">
                     <button class="del-btn" onclick="deleteItem(${item.id})">DELETE</button>
-                    <div style="font-size:0.7rem; color:var(--neon); margin-bottom:5px;">[${item.date}] LENS: ${item.role}</div>
-                    <div style="color:#888; font-size:0.75rem; font-style:italic; margin-bottom:10px;">"${item.input.substring(0,80)}..."</div>
-                    <div style="font-size:0.85rem; color:#ccc;">${item.output.substring(0,180).replace(/\n/g, '<br>')}...</div>
+                    <div style="font-size:0.7rem; color:var(--neon); margin-bottom:8px;">[${item.date}] LENS: ${item.role}</div>
+                    <div style="color:#666; font-size:0.75rem; font-style:italic; margin-bottom:12px;">Signal: "${item.input.substring(0,90)}..."</div>
+                    <div style="font-size:0.9rem;">${item.output.substring(0,250).replace(/\n/g, '<br>')}...</div>
                 </div>
             `).join('');
         }
@@ -102,7 +102,7 @@
         }
 
         function clearHistory() {
-            if(confirm("Confirm Archive Purge?")) { localStorage.removeItem('coreHistory'); loadHistory(); }
+            if(confirm("Purge all archived signals?")) { localStorage.removeItem('coreHistory'); loadHistory(); }
         }
     </script>
 </body>
