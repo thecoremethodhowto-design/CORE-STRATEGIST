@@ -77,77 +77,47 @@
     </div>
 
     <script>
-        const CONFIG = {
-            API_URL: "https://thecoremethodhowto-backend.onrender.com/chat",
-            TIMEOUT: 45000,
-            MAX_RETRIES: 1
-        };
+    // Config nesnesinin tanımlandığından emin olun
+    const CONFIG = {
+        API_URL: "https://thecoremethodhowto-backend.onrender.com/chat",
+        TIMEOUT: 45000,
+        MAX_RETRIES: 1
+    };
 
-        // 1. Utility: Secure ID Generation
-        function generateAuditId() {
-            return `LOG-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substr(2, 4).toUpperCase()}`;
-        }
+    // Fonksiyonu pencereye (window) bağlayarak görünür kılalım
+    window.executeAnalysis = async function() {
+        const btn = document.getElementById('execBtn');
+        const input = document.getElementById('userInput').value.trim();
+        const status = document.getElementById('statusDisplay');
+        
+        if (!input) return;
 
-        // 2. Utility: Update Status (Secure textContent)
-        function updateStatus(msg, isError = false) {
-            const statusEl = document.getElementById('statusDisplay');
-            statusEl.textContent = msg;
-            statusEl.className = isError ? 'status-msg error' : 'status-msg';
-        }
+        btn.disabled = true;
+        if (status) status.textContent = "Auditing...";
 
-        // 3. SECURE RENDERER (Anti-XSS Defense)
-        function createSecureAuditContent(rawResponse) {
-            const container = document.createElement('div');
-            container.className = 'audit-content';
-            const lines = rawResponse.split('\n');
-            
-            lines.forEach(line => {
-                if (line.trim().startsWith('### ')) {
-                    const h3 = document.createElement('h3');
-                    h3.textContent = line.replace('### ', '').trim();
-                    container.appendChild(h3);
-                } else {
-                    const p = document.createElement('p');
-                    const parts = line.split(/\*\*(.*?)\*\*/g);
-                    parts.forEach((part, index) => {
-                        if (index % 2 === 1) {
-                            const strong = document.createElement('strong');
-                            strong.textContent = part;
-                            p.appendChild(strong);
-                        } else {
-                            p.appendChild(document.createTextNode(part));
-                        }
-                    });
-                    container.appendChild(p);
-                }
+        try {
+            const response = await fetch(CONFIG.API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ 
+                    user_input: input, 
+                    expert_role: document.getElementById('expertRole').value 
+                })
             });
-            return container;
-        }
 
-        // 4. Network Layer with Retry & Timeout Logic
-        async function fetchWithRetry(url, options, retries = CONFIG.MAX_RETRIES) {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), CONFIG.TIMEOUT);
+            const data = await response.json();
+            // Analizi kaydetme ve render etme işlemleri...
+            console.log("Success:", data);
             
-            try {
-                const response = await fetch(url, { ...options, signal: controller.signal });
-                clearTimeout(timeoutId); 
-                
-                if (response.status === 429) throw new Error("Rate limit exceeded.");
-                if (!response.ok) throw new Error(`Status Error: ${response.status}`);
-                
-                return await response.json();
-            } catch (err) {
-                clearTimeout(timeoutId);
-                if (retries > 0 && err.name !== 'AbortError') {
-                    updateStatus("Retrying signal...");
-                    return fetchWithRetry(url, options, retries - 1);
-                }
-                throw err;
-            }
-        }
+            // saveToHistory ve renderHistory fonksiyonlarınızın da burada tanımlı olduğundan emin olun
+            if (typeof saveToHistory === 'function') saveToHistory(input, data.response);
+            if (typeof renderHistory === 'function') renderHistory();
 
-        // 5. Main Execution
-        async function executeAnalysis() {
-            const btn = document.getElementById('execBtn');
-            const input = document.getElementById('userInput').value.trim();
+        } catch (err) {
+            console.error("Connection Error:", err);
+            if (status) status.textContent = "Connection Error.";
+        } finally {
+            btn.disabled = false;
+        }
+    };
+</script>
