@@ -1,31 +1,29 @@
-<script>
-    async function executeAnalysis() {
-        const btn = document.getElementById('execBtn');
-        const resDiv = document.getElementById('response');
-        const input = document.getElementById('userInput').value;
-        const role = document.getElementById('expertRole').value;
+async function executeAnalysis() {
+    const btn = document.getElementById('execBtn');
+    const resDiv = document.getElementById('response');
+    const input = document.getElementById('userInput').value;
+    const role = document.getElementById('expertRole').value;
 
-        if (!input.trim()) return alert("Signal input required.");
+    if (!input.trim()) return alert("Signal input required.");
 
-        btn.innerText = "CALIBRATING SIGNAL...";
-        btn.disabled = true;
-        resDiv.innerHTML = "<em>PROTOCOL INITIALIZED: Calibrating against 2026 Resilience Standards... (If the engine is asleep, this may take up to 30s)</em>";
+    btn.innerText = "CALIBRATING SIGNAL...";
+    btn.disabled = true;
+    resDiv.innerHTML = "<em>PROTOCOL INITIALIZED: Calibrating against 2026 Resilience Standards... (If the engine is asleep, this may take up to 45s)</em>";
 
-        try {
-            const response = await fetch("https://thecoremethodhowto-backend.onrender.com/chat", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ user_input: input, expert_role: role })
-            });
+    try {
+        const response = await fetch("https://thecoremethodhowto-backend.onrender.com/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ user_input: input, expert_role: role })
+        });
 
-            const data = await response.json();
-            // innerText yerine innerHTML kullanarak Markdown yapısını koruyoruz
-            resDiv.innerHTML = (data.response || "Error: Engine Timeout.").replace(/\n/g, '<br>');
-        } catch (err) {
-            resDiv.innerText = "System Wake-up: The engine is initializing. Please retry in 20 seconds.";
-        } finally {
-            btn.innerText = "EXECUTE SENIOR ANALYSIS";
-            btn.disabled = false;
-        }
+        const data = await response.json();
+        // Markdown formatını korumak için innerHTML ve satır sonu dönüşümü
+        resDiv.innerHTML = (data.response || "Error: Engine Timeout.").replace(/\n/g, '<br>');
+    } catch (err) {
+        resDiv.innerText = "System Wake-up: The engine is initializing. Please retry in 20 seconds.";
+    } finally {
+        btn.innerText = "EXECUTE SENIOR ANALYSIS";
+        btn.disabled = false;
     }
-</script>
+}
