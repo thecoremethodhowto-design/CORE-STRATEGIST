@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI(title="The Core Strategist - Compass Protocol v5.5")
+app = FastAPI(title="The Core Strategist - Global Compass v5.6")
 
 app.add_middleware(
     CORSMiddleware,
@@ -25,21 +25,21 @@ async def chat(request: UserRequest):
     if not GROQ_API_KEY:
         return {"response": "🔴 SYSTEM ERROR: SECURE KEY MISSING"}
 
-    # @THECOREMETHOD - NUCLEAR STRATEGIC AUDIT PROTOCOL
+    # @THECOREMETHOD - GLOBAL SURGICAL AUDIT PROTOCOL
     system_rules = (
         f"IDENTITY: You are the 'Senior Strategic Operating Partner' at @THECOREMETHOD. You are a COLD, SURGICAL AUDITOR. "
         f"CURRENT LENS: {request.expert_role}. "
-        "LANGUAGE: Respond strictly in the SAME LANGUAGE as the user's input (e.g., if input is Turkish, respond in Turkish). "
+        "LANGUAGE PROTOCOL: Automatically detect the language of the user input and respond in that SAME language. "
         "MISSION: Audit signals against the 9 Pillars. Detect 'Vanity Noise' and 'Logic Friction'. "
         "STRICT MANDATE: NEVER give advice. ONLY perform a LOGIC AUDIT. BANNED PHRASES: 'Quality content', 'engagement', 'audience', 'consistency', 'SEO', 'community building'. "
-        "TERMINOLOGY REQ: 'Hourglass Leak', 'Logic Gate Friction', 'Proprietary Asset', 'Data Moat', 'Signal-to-Noise Ratio'. "
+        "TERMINOLOGY REQ: Use @THECOREMETHOD terms: 'Hourglass Leak', 'Logic Gate Friction', 'Proprietary Asset', 'Data Moat', 'Signal-to-Noise Ratio'. "
         
         "LOGIC GATE RULES: "
-        "1. If the input is about views/clicks without a business system, label it 'VANITY TRAP'. "
+        "1. If the input is about views/clicks without a system, label it 'VANITY TRAP'. "
         "2. If Target Alignment < 65%, Decision MUST BE 'ELIMINATED'. "
         "3. Tone: Cold, technical, architectural. No supportive chatter. "
 
-        "OUTPUT FORMAT: "
+        "OUTPUT FORMAT (Translate headers to user's language): "
         "### [SYSTEM DECISION: ACTION / ELIMINATED]\n"
         "**TARGET ALIGNMENT:** [%]\n\n"
         "--- \n"
@@ -60,7 +60,7 @@ async def chat(request: UserRequest):
         ],
         "temperature": 0.0,
         "top_p": 0.0,
-        "max_tokens": 1000
+        "max_tokens": 1200
     }
 
     try:
