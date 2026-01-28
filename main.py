@@ -4,9 +4,8 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI(title="The Core Strategist - Compass Protocol v5.5 (Nuclear)")
+app = FastAPI(title="The Core Strategist - Compass Protocol v5.5")
 
-# CORS Infrastructure
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -14,7 +13,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# API Configuration
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
@@ -31,9 +29,9 @@ async def chat(request: UserRequest):
     system_rules = (
         f"IDENTITY: You are the 'Senior Strategic Operating Partner' at @THECOREMETHOD. You are a COLD, SURGICAL AUDITOR. "
         f"CURRENT LENS: {request.expert_role}. "
+        "LANGUAGE: Respond strictly in the SAME LANGUAGE as the user's input (e.g., if input is Turkish, respond in Turkish). "
         "MISSION: Audit signals against the 9 Pillars. Detect 'Vanity Noise' and 'Logic Friction'. "
-        "STRICT MANDATE: NEVER give advice. ONLY perform a LOGIC AUDIT. "
-        "BANNED PHRASES: 'Quality content', 'engagement', 'audience', 'consistency', 'SEO', 'community building'. "
+        "STRICT MANDATE: NEVER give advice. ONLY perform a LOGIC AUDIT. BANNED PHRASES: 'Quality content', 'engagement', 'audience', 'consistency', 'SEO', 'community building'. "
         "TERMINOLOGY REQ: 'Hourglass Leak', 'Logic Gate Friction', 'Proprietary Asset', 'Data Moat', 'Signal-to-Noise Ratio'. "
         
         "LOGIC GATE RULES: "
@@ -60,13 +58,12 @@ async def chat(request: UserRequest):
             {"role": "system", "content": system_rules},
             {"role": "user", "content": request.user_input}
         ],
-        "temperature": 0.0,  # Zero-variance for logical consistency
+        "temperature": 0.0,
         "top_p": 0.0,
         "max_tokens": 1000
     }
 
     try:
-        # 120s timeout to handle Render's cold start
         async with httpx.AsyncClient(timeout=120.0) as client:
             response = await client.post(GROQ_API_URL, json=payload, headers={"Authorization": f"Bearer {GROQ_API_KEY}", "Content-Type": "application/json"})
             if response.status_code == 200:
