@@ -6,21 +6,21 @@
     <title>THE CORE METHOD | CORE STRATEGIST</title>
     <style>
         :root { --neon: #00FFFF; --bg: #000; --text: #e0e0e0; --red: #FF3131; }
-        body { background: var(--bg); color: var(--text); font-family: 'Courier New', Courier, monospace; display: flex; justify-content: center; padding: 20px; margin: 0; }
-        .container { width: 100%; max-width: 700px; text-align: center; border: 2px solid var(--neon); padding: 40px; box-shadow: 0 0 30px rgba(0, 255, 255, 0.1); border-radius: 12px; }
+        body { background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; display: flex; justify-content: center; padding: 20px; }
+        .container { width: 100%; max-width: 700px; text-align: center; border: 2px solid var(--neon); padding: 40px; border-radius: 12px; box-shadow: 0 0 30px rgba(0, 255, 255, 0.1); }
         .logo img { width: 120px; margin-bottom: 20px; }
         h1 { color: var(--neon); letter-spacing: 5px; font-size: 1.4rem; margin: 10px 0; }
         .slogan { color: #666; font-size: 0.7rem; text-transform: uppercase; margin-bottom: 30px; }
-        select, textarea { width: 100%; padding: 15px; margin-bottom: 20px; background: #0a0a0a; border: 1px solid #333; color: var(--neon); border-radius: 4px; font-family: inherit; box-sizing: border-box; outline: none; }
+        select, textarea { width: 100%; padding: 15px; margin-bottom: 25px; background: #0a0a0a; border: 1px solid #333; color: var(--neon); border-radius: 4px; box-sizing: border-box; outline: none; font-family: inherit; }
         button { width: 100%; padding: 20px; background: none; border: 2px solid var(--neon); color: var(--neon); font-weight: bold; cursor: pointer; transition: 0.4s; letter-spacing: 2px; }
         button:hover { background: var(--neon); color: #000; box-shadow: 0 0 20px var(--neon); }
-        .purge-btn { border-color: var(--red); color: var(--red); font-size: 0.75rem; margin-top: 10px; padding: 10px; }
+        .purge-btn { border-color: var(--red); color: var(--red); margin-top: 15px; padding: 12px; font-size: 0.8rem; }
         .purge-btn:hover { background: var(--red); color: white; box-shadow: 0 0 15px var(--red); }
-        #history { margin-top: 40px; text-align: left; border-top: 1px solid #222; }
-        .audit-item { background: #080808; border-left: 3px solid var(--neon); padding: 20px; margin-top: 25px; border-radius: 0 8px 8px 0; }
-        .audit-meta { font-size: 0.7rem; color: #555; margin-bottom: 10px; text-transform: uppercase; }
-        .audit-input { color: #888; font-size: 0.85rem; margin-bottom: 20px; padding: 10px; background: #000; border: 1px dashed #222; }
-        h3 { color: var(--neon); margin-top: 20px; font-size: 1.1rem; }
+        #history { margin-top: 50px; text-align: left; }
+        .audit-item { background: #080808; border-left: 4px solid var(--neon); padding: 25px; margin-bottom: 30px; border-radius: 0 8px 8px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .audit-meta { font-size: 0.75rem; color: #555; margin-bottom: 12px; font-weight: bold; }
+        .audit-input { color: #888; font-size: 0.9rem; margin-bottom: 20px; padding: 12px; background: #000; border: 1px dashed #222; }
+        h3 { color: var(--neon); border-bottom: 1px solid #222; padding-bottom: 8px; margin-top: 25px; }
     </style>
 </head>
 <body>
@@ -32,12 +32,12 @@
         </div>
 
         <select id="expertRole">
-            <option value="VC Analyst">VC Analyst (Moat & Risk Audit)</option>
-            <option value="Fractional COO">Fractional COO (Systems & Ops Audit)</option>
+            <option value="VC Analyst">VC Analyst (Risk & Moat Audit)</option>
+            <option value="Fractional COO">Fractional COO (Ops & Systems Audit)</option>
             <option value="Growth Operator">Growth Operator (Scale Logic)</option>
         </select>
 
-        <textarea id="userInput" rows="5" placeholder="Define your context, goal, and constraints..."></textarea>
+        <textarea id="userInput" rows="5" placeholder="Define your strategic signal..."></textarea>
         <button id="execBtn" onclick="executeAnalysis()">EXECUTE SENIOR ANALYSIS</button>
         <button class="purge-btn" onclick="purgeArchive()">PURGE STRATEGIC ARCHIVE</button>
 
@@ -52,7 +52,7 @@
             const input = document.getElementById('userInput').value;
             const role = document.getElementById('expertRole').value;
 
-            if (!input.trim()) return alert("Signal required.");
+            if (!input.trim()) return alert("Signal input required.");
             btn.disabled = true; btn.innerText = "AUDITING SIGNAL...";
 
             try {
@@ -67,7 +67,7 @@
                 loadHistory();
                 document.getElementById('userInput').value = "";
             } catch (err) {
-                alert("GATE ERROR: Connection drift detected.");
+                alert("GATE ERROR: Engine recalibrating.");
             } finally {
                 btn.disabled = false; btn.innerText = "EXECUTE SENIOR ANALYSIS";
             }
@@ -98,7 +98,7 @@
         }
 
         function purgeArchive() {
-            if(confirm("Confirm Archive Purge? All strategic signals will be permanently eliminated.")) {
+            if(confirm("Confirm Archive Purge? All signals will be eliminated.")) {
                 localStorage.removeItem('core_history');
                 loadHistory();
             }
