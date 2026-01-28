@@ -3,13 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="THE CORE METHOD Strategic Auditor - Professional Logic Gate Interface">
     <title>THE CORE METHOD | CORE STRATEGIST</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
         :root { 
-            --neon: #00FFFF; --bg: #000; --card-bg: #0a0a0a; 
-            --text-main: #e0e0e0; --text-dim: #888; --red: #FF3131; 
-            --font-mono: 'Courier New', monospace; --font-sans: 'Inter', system-ui, sans-serif;
+            --neon: #00FFFF; --bg: #000; --card-bg: #0d0d0d; 
+            --text-main: #e0e0e0; --text-dim: #999; --red: #FF3131; 
+            --font-mono: 'JetBrains Mono', monospace; --font-sans: 'Inter', sans-serif;
         }
         * { box-sizing: border-box; }
         body { 
@@ -17,185 +20,153 @@
             font-family: var(--font-sans); line-height: 1.6;
             margin: 0; padding: 20px; display: flex; justify-content: center;
         }
-        .app-container { width: 100%; max-width: 800px; }
+        .app-container { width: 100%; max-width: 750px; } /* Reading ergonomics optimized */
         
-        /* Semantic Header */
-        header { text-align: center; margin-bottom: 40px; border: 1px solid #222; padding: 20px; border-radius: 12px; }
-        .logo img { width: 100px; height: auto; margin-bottom: 10px; filter: drop-shadow(0 0 5px var(--neon)); }
-        h1 { color: var(--neon); font-family: var(--font-mono); letter-spacing: 4px; font-size: 1.5rem; margin: 0; }
-        .slogan { color: var(--text-dim); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
+        header { text-align: center; margin-bottom: 40px; padding: 20px; }
+        .logo img { width: 90px; filter: drop-shadow(0 0 8px var(--neon)); margin-bottom: 10px; }
+        h1 { color: var(--neon); font-family: var(--font-mono); font-size: 1.4rem; margin: 0; letter-spacing: 3px; }
 
-        /* Main Audit Section */
-        main { background: var(--card-bg); border: 2px solid var(--neon); padding: 30px; border-radius: 12px; box-shadow: 0 0 30px rgba(0, 255, 255, 0.05); }
-        .field-group { margin-bottom: 20px; text-align: left; }
-        label { display: block; font-size: 0.8rem; color: var(--neon); margin-bottom: 8px; font-family: var(--font-mono); }
+        main { background: var(--card-bg); border: 1px solid #222; padding: 30px; border-radius: 12px; }
+        .field-group { margin-bottom: 25px; }
+        label { display: block; font-size: 0.75rem; color: var(--neon); margin-bottom: 10px; font-family: var(--font-mono); text-transform: uppercase; }
         
         select, textarea { 
-            width: 100%; padding: 12px; background: #111; border: 1px solid #333; 
-            color: var(--text-main); border-radius: 6px; font-size: 1rem; transition: border 0.3s;
+            width: 100%; padding: 14px; background: #050505; border: 1px solid #333; 
+            color: var(--text-main); border-radius: 8px; font-size: 0.95rem; font-family: var(--font-sans);
+            transition: all 0.2s ease;
         }
-        textarea:focus { border-color: var(--neon); outline: none; }
+        textarea:focus { border-color: var(--neon); outline: none; background: #080808; }
 
-        /* Mobile Responsive Buttons */
-        .btn-group { display: flex; flex-direction: column; gap: 10px; }
+        .btn-group { display: flex; flex-direction: column; gap: 12px; }
         button { 
-            padding: 16px; font-weight: bold; cursor: pointer; border-radius: 6px;
-            font-family: var(--font-mono); letter-spacing: 1px; transition: all 0.3s;
+            padding: 18px; font-weight: 700; cursor: pointer; border-radius: 8px;
+            font-family: var(--font-mono); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         #execBtn { background: none; border: 2px solid var(--neon); color: var(--neon); }
-        #execBtn:hover:not(:disabled) { background: var(--neon); color: #000; box-shadow: 0 0 15px var(--neon); }
-        #execBtn:disabled { border-color: #333; color: #333; cursor: not-allowed; }
-        .purge-btn { background: none; border: 1px solid #444; color: var(--text-dim); font-size: 0.7rem; }
-        .purge-btn:hover { border-color: var(--red); color: var(--red); }
+        #execBtn:hover:not(:disabled) { background: var(--neon); color: #000; box-shadow: 0 0 20px rgba(0,255,255,0.2); }
+        #execBtn:disabled { border-color: #333; color: #444; cursor: wait; }
 
-        /* Audit History - Semantic Articles */
-        section#history { margin-top: 50px; }
-        .history-title { font-family: var(--font-mono); color: var(--neon); font-size: 1rem; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        /* Audit Card Polish */
         .audit-card { 
-            background: #080808; border-left: 3px solid var(--neon); 
-            padding: 20px; margin-bottom: 20px; border-radius: 0 8px 8px 0;
-            animation: fadeIn 0.5s ease-out;
+            background: #0a0a0a; border: 1px solid #1a1a1a; 
+            padding: 25px; margin-bottom: 25px; border-radius: 12px;
+            max-width: 100%; overflow-wrap: break-word; /* Line length control */
         }
-        .audit-meta { font-size: 0.7rem; color: #555; margin-bottom: 10px; font-family: var(--font-mono); }
-        .audit-content h3 { color: var(--neon); font-size: 1.1rem; margin: 15px 0 10px; font-family: var(--font-mono); }
-        .audit-content strong { color: var(--neon); }
+        .audit-content { font-size: 1rem; color: #ccc; max-width: 65ch; margin: 0 auto; } /* Optimal characters per line */
+        .audit-content h3 { font-family: var(--font-mono); color: var(--neon); margin-top: 25px; font-size: 1.1rem; }
         
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @media (max-width: 600px) { body { padding: 10px; } main { padding: 20px; } }
+        .status-msg { font-size: 0.8rem; margin-top: 10px; font-family: var(--font-mono); }
+        .error { color: var(--red); }
+        .retry-hint { color: var(--neon); font-size: 0.7rem; }
     </style>
 </head>
 <body>
     <div class="app-container">
         <header>
-            <div class="logo">
-                <img src="https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=1440,h=1504,fit=crop/fysh94jQ56cgrcdf/logo-dmooxvni4pk0hyyh.png" alt="THE CORE METHOD Logo">
-            </div>
+            <img src="https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=1440,h=1504,fit=crop/fysh94jQ56cgrcdf/logo-dmooxvni4pk0hyyh.png" alt="THE CORE METHOD LOGO" width="90">
             <h1>CORE STRATEGIST</h1>
-            <p class="slogan">Mastering the Core, Unlocking the Potential.</p>
+            <p class="slogan" style="color:#555; font-size: 0.7rem; margin-top:5px;">Systemic Logic Audit // v11.0</p>
         </header>
 
         <main>
             <div class="field-group">
-                <label for="expertRole">SELECT STRATEGIC LENS</label>
+                <label for="expertRole">Analysis Lens</label>
                 <select id="expertRole">
                     <option value="VC Analyst">VC Analyst (Risk & Moat)</option>
                     <option value="Fractional COO">Fractional COO (Ops & Systems)</option>
                     <option value="Growth Operator">Growth Operator (Scale Logic)</option>
                 </select>
             </div>
-
             <div class="field-group">
-                <label for="userInput">INPUT STRATEGIC SIGNAL</label>
-                <textarea id="userInput" rows="5" 
-                    placeholder="E.g.: 'We are scaling our YouTube ops but the conversion from views to newsletter is dropping below 2%...'"></textarea>
+                <label for="userInput">Strategic Signal</label>
+                <textarea id="userInput" rows="5" placeholder="Define context, logic gates, and perceived hourglass leaks..."></textarea>
+                <div id="statusDisplay" class="status-msg"></div>
             </div>
-
             <div class="btn-group">
-                <button id="execBtn" onclick="executeAnalysis()">EXECUTE SENIOR ANALYSIS</button>
-                <button class="purge-btn" onclick="purgeArchive()">PURGE ARCHIVE</button>
+                <button id="execBtn" onclick="executeAnalysis()">Execute Audit</button>
             </div>
         </main>
 
-        <section id="history" aria-label="Audit History">
-            <div class="history-title"><span>//</span> STRATEGIC ARCHIVE</div>
-            <div id="historyContainer"></div>
-        </section>
+        <section id="history" style="margin-top: 40px;"></section>
     </div>
 
     <script>
-        // 1. Configuration & Constants
         const CONFIG = {
             API_URL: "https://thecoremethodhowto-backend.onrender.com/chat",
-            MAX_HISTORY: 10
+            TIMEOUT: 45000,
+            MAX_RETRIES: 2
         };
 
-        window.onload = loadHistory;
-
-        // 2. Security: XSS Protection & Markdown Lite
-        function safeRender(text) {
-            const div = document.createElement('div');
-            div.textContent = text; // First, escape all HTML
-            let html = div.innerHTML;
+        async function fetchWithRetry(url, options, retries = CONFIG.MAX_RETRIES) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), CONFIG.TIMEOUT);
             
-            // Allow only specific markdown-like formatting safely
-            html = html.replace(/\n/g, '<br>')
-                       .replace(/### (.*?)<br>/g, '<h3>$1</h3>')
-                       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            return html;
+            try {
+                const response = await fetch(url, { ...options, signal: controller.signal });
+                clearTimeout(timeoutId);
+                
+                if (response.status === 429) throw new Error("Rate limit exceeded. Slow down.");
+                if (!response.ok) throw new Error(`System Friction: ${response.status}`);
+                
+                return await response.json();
+            } catch (err) {
+                if (retries > 0 && err.name !== 'AbortError') {
+                    document.getElementById('statusDisplay').innerHTML = `<span class="retry-hint">Retrying... (${retries} attempts left)</span>`;
+                    return fetchWithRetry(url, options, retries - 1);
+                }
+                throw err;
+            }
         }
 
-        // 3. Core Execution
         async function executeAnalysis() {
             const btn = document.getElementById('execBtn');
+            const status = document.getElementById('statusDisplay');
             const input = document.getElementById('userInput').value.trim();
-            const role = document.getElementById('expertRole').value;
-
-            if (input.length < 5) {
-                alert("Signal too weak for analysis.");
+            
+            if (!navigator.onLine) {
+                status.innerHTML = `<span class="error">Offline: Check your network connection.</span>`;
                 return;
             }
 
             btn.disabled = true;
-            btn.innerText = "AUDITING CORE NODES...";
+            status.innerHTML = "Processing Signal...";
 
             try {
-                const response = await fetch(CONFIG.API_URL, {
+                const data = await fetchWithRetry(CONFIG.API_URL, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ user_input: input, expert_role: role })
+                    body: JSON.stringify({ user_input: input, expert_role: document.getElementById('expertRole').value })
                 });
 
-                if (!response.ok) throw new Error("Gateway Friction");
-
-                const data = await response.json();
-                saveToHistory(input, data.response, role);
-                loadHistory();
+                saveToHistory(input, data.response);
+                renderHistory();
                 document.getElementById('userInput').value = "";
+                status.innerHTML = "";
             } catch (err) {
-                alert("🔴 GATE ERROR: " + err.message);
+                status.innerHTML = `<span class="error">${err.name === 'AbortError' ? 'Timeout: Server took too long.' : err.message}</span>`;
             } finally {
                 btn.disabled = false;
-                btn.innerText = "EXECUTE SENIOR ANALYSIS";
             }
         }
 
-        // 4. Persistence: LocalStorage with Limits
-        function saveToHistory(query, res, role) {
-            let history = JSON.parse(localStorage.getItem('core_history_v2') || "[]");
-            history.unshift({ query, res, role, date: new Date().toLocaleString() });
-            
-            // Performance: Limit history to top 10
-            if (history.length > CONFIG.MAX_HISTORY) history = history.slice(0, CONFIG.MAX_HISTORY);
-            
-            localStorage.setItem('core_history_v2', JSON.stringify(history));
+        function saveToHistory(q, r) {
+            let h = JSON.parse(localStorage.getItem('ch_v3') || "[]");
+            h.unshift({ q, r, d: new Date().toLocaleTimeString() });
+            localStorage.setItem('ch_v3', JSON.stringify(h.slice(0, 10)));
         }
 
-        function loadHistory() {
-            const container = document.getElementById('historyContainer');
-            let history = JSON.parse(localStorage.getItem('core_history_v2') || "[]");
-            
-            if (history.length === 0) {
-                container.innerHTML = '<p style="color:#444; font-size:0.8rem;">Archive empty. No signals detected.</p>';
-                return;
-            }
-
-            container.innerHTML = history.map(item => `
-                <article class="audit-card">
-                    <div class="audit-meta">${item.date} | LENS: ${item.role}</div>
-                    <div style="color:var(--text-dim); font-size:0.85rem; margin-bottom:15px; border-bottom: 1px solid #1a1a1a; padding-bottom:10px;">
-                        SIGNAL: ${item.query.substring(0, 100)}${item.query.length > 100 ? '...' : ''}
+        function renderHistory() {
+            const hist = JSON.parse(localStorage.getItem('ch_v3') || "[]");
+            document.getElementById('history').innerHTML = hist.map(i => `
+                <div class="audit-card">
+                    <div style="font-size:0.7rem; color:#444; font-family:var(--font-mono); margin-bottom:10px;">${i.d} // LOG_ID: ${Math.random().toString(36).substr(2, 5).toUpperCase()}</div>
+                    <div class="audit-content">
+                        ${i.r.replace(/\n/g, '<br>').replace(/### (.*?)<br>/g, '<h3>$1</h3>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}
                     </div>
-                    <div class="audit-content">${safeRender(item.res)}</div>
-                </article>
+                </div>
             `).join('');
         }
-
-        function purgeArchive() {
-            if(confirm("Confirm Archive Purge? All strategic data will be lost.")) {
-                localStorage.removeItem('core_history_v2');
-                loadHistory();
-            }
-        }
+        window.onload = renderHistory;
     </script>
 </body>
 </html>
