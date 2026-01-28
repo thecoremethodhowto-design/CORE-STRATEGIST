@@ -6,7 +6,7 @@
     <style>
         :root { --neon: #00FFFF; --bg: #000; --text: #e0e0e0; --red: #FF3131; }
         body { background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; display: flex; justify-content: center; padding: 20px; }
-        .container { width: 100%; max-width: 750px; text-align: center; border: 2px solid var(--neon); padding: 35px; border-radius: 12px; box-shadow: 0 0 25px rgba(0, 255, 255, 0.1); }
+        .container { width: 100%; max-width: 750px; text-align: center; border: 2px solid var(--neon); padding: 35px; border-radius: 12px; }
         .logo img { width: 110px; margin-bottom: 15px; }
         h1 { color: var(--neon); letter-spacing: 5px; font-size: 1.4rem; margin-bottom: 30px; }
         .slogan { color: #555; font-size: 0.75rem; text-transform: uppercase; margin-bottom: 25px; letter-spacing: 2px; }
@@ -14,11 +14,9 @@
         button { width: 100%; padding: 20px; background: none; border: 2px solid var(--neon); color: var(--neon); font-weight: bold; cursor: pointer; transition: 0.4s; letter-spacing: 2px; }
         button:hover { background: var(--neon); color: #000; box-shadow: 0 0 20px var(--neon); }
         .purge-btn { border-color: var(--red); color: var(--red); font-size: 0.75rem; margin-top: 15px; padding: 12px; }
-        .purge-btn:hover { background: var(--red); color: #fff; box-shadow: 0 0 15px var(--red); }
         #history { margin-top: 40px; text-align: left; }
         .audit-item { background: #080808; border-left: 4px solid var(--neon); padding: 25px; margin-bottom: 25px; border-radius: 0 8px 8px 0; }
-        .audit-meta { font-size: 0.7rem; color: #444; margin-bottom: 10px; border-bottom: 1px solid #1a1a1a; padding-bottom: 5px; }
-        h3 { color: var(--neon); margin-top: 20px; font-size: 1.1rem; }
+        h3 { color: var(--neon); margin-top: 20px; font-size: 1.1rem; border-bottom: 1px solid #222; padding-bottom: 5px; }
         strong { color: var(--neon); }
     </style>
 </head>
@@ -26,29 +24,27 @@
     <div class="container">
         <div class="logo"><img src="https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=1440,h=1504,fit=crop/fysh94jQ56cgrcdf/logo-dmooxvni4pk0hyyh.png">
             <h1>CORE STRATEGIST</h1>
-            <div class="slogan">Multilingual Strategic Logic Gate | @THECOREMETHOD</div>
+            <div class="slogan">Senior Logic Gate Engine | @THECOREMETHOD</div>
         </div>
         <select id="expertRole">
             <option value="VC Analyst">VC Analyst (Risk & Moat)</option>
             <option value="Fractional COO">Fractional COO (Ops & Systems)</option>
             <option value="Growth Operator">Growth Operator (Scale Logic)</option>
         </select>
-        <textarea id="userInput" rows="5" placeholder="Input signal in any language (Context, Goals, Constraints)..."></textarea>
+        <textarea id="userInput" rows="5" placeholder="Input strategic signal (Any language)..."></textarea>
         <button id="execBtn" onclick="executeAnalysis()">EXECUTE SENIOR ANALYSIS</button>
-        <button class="purge-btn" onclick="purgeArchive()">PURGE STRATEGIC ARCHIVE</button>
+        <button class="purge-btn" onclick="purgeArchive()">PURGE ARCHIVE</button>
         <div id="history"></div>
     </div>
 
     <script>
         window.onload = loadHistory;
-
         async function executeAnalysis() {
             const btn = document.getElementById('execBtn');
             const input = document.getElementById('userInput').value;
             const role = document.getElementById('expertRole').value;
             if (!input.trim()) return;
-            btn.disabled = true; btn.innerText = "AUDITING CORE SIGNAL...";
-
+            btn.disabled = true; btn.innerText = "AUDITING SIGNAL...";
             try {
                 const response = await fetch("https://thecoremethodhowto-backend.onrender.com/chat", {
                     method: "POST", headers: { "Content-Type": "application/json" },
@@ -58,43 +54,25 @@
                 saveToHistory(input, data.response, role);
                 loadHistory();
                 document.getElementById('userInput').value = "";
-            } catch (err) {
-                alert("Gate Drift: Engine is recalibrating.");
-            } finally {
-                btn.disabled = false; btn.innerText = "EXECUTE SENIOR ANALYSIS";
-            }
+            } catch (err) { alert("Logic Drift detected."); } finally { btn.disabled = false; btn.innerText = "EXECUTE SENIOR ANALYSIS"; }
         }
-
         function saveToHistory(query, res, role) {
             let history = JSON.parse(localStorage.getItem('core_history') || "[]");
             history.unshift({ query, res, role, date: new Date().toLocaleString() });
             localStorage.setItem('core_history', JSON.stringify(history));
         }
-
         function loadHistory() {
             const container = document.getElementById('history');
             let history = JSON.parse(localStorage.getItem('core_history') || "[]");
             container.innerHTML = history.map(item => `
                 <div class="audit-item">
-                    <div class="audit-meta">${item.date} | LENS: ${item.role}</div>
-                    <div style="color:#666; font-size:0.85rem; margin-bottom:15px; border-bottom: 1px dashed #222; padding-bottom: 10px;">SIGNAL: ${item.query}</div>
-                    <div>${formatMarkdown(item.res)}</div>
+                    <div style="font-size:0.7rem; color:#444;">${item.date} | LENS: ${item.role}</div>
+                    <div style="color:#666; font-size:0.85rem; margin: 10px 0;">SIGNAL: ${item.query}</div>
+                    <div>${item.res.replace(/\n/g, '<br>').replace(/### (.*?)<br>/g, '<h3>$1</h3>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</div>
                 </div>
             `).join('');
         }
-
-        function formatMarkdown(text) {
-            return text.replace(/\n/g, '<br>')
-                       .replace(/### (.*?)<br>/g, '<h3>$1</h3>')
-                       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-        }
-
-        function purgeArchive() {
-            if(confirm("Confirm Archive Purge? All strategic signals will be eliminated.")) {
-                localStorage.removeItem('core_history');
-                loadHistory();
-            }
-        }
+        function purgeArchive() { if(confirm("Confirm Archive Purge?")) { localStorage.removeItem('core_history'); loadHistory(); } }
     </script>
 </body>
 </html>
