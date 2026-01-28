@@ -3,43 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CORE STRATEGIST | @THECOREMETHOD</title>
+    <title>CORE STRATEGIST | COMPASS PROTOCOL</title>
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#00FFFF">
     <style>
         :root { --neon: #00FFFF; --bg: #000; --text: #e0e0e0; }
         body { background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; display: flex; justify-content: center; padding: 20px; margin: 0; }
-        .container { width: 100%; max-width: 650px; text-align: center; border: 2px solid var(--neon); padding: 25px; border-radius: 12px; background: #050505; }
-        h1 { color: var(--neon); letter-spacing: 5px; font-size: 1.2rem; }
-        select, textarea { width: 100%; padding: 12px; margin-bottom: 20px; background: #000; border: 1px solid #333; color: var(--neon); font-family: inherit; box-sizing: border-box; }
-        button { width: 100%; padding: 18px; background: none; border: 2px solid var(--neon); color: var(--neon); font-weight: bold; cursor: pointer; transition: 0.4s; }
-        button:hover { background: var(--neon); color: #000; box-shadow: 0 0 15px var(--neon); }
-        #response { margin-top: 25px; text-align: left; line-height: 1.6; color: #fff; font-size: 0.9rem; border-bottom: 2px dashed #222; padding-bottom: 20px; }
-        
-        /* ARCHIVE STYLES */
-        .history-box { margin-top: 30px; text-align: left; }
-        .history-item { border-left: 3px solid var(--neon); background: #0a0a0a; padding: 15px; margin-bottom: 15px; position: relative; }
-        .history-header { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--neon); margin-bottom: 8px; font-weight: bold; }
-        .history-input { color: #888; font-style: italic; font-size: 0.75rem; margin-bottom: 10px; border-bottom: 1px solid #1a1a1a; padding-bottom: 5px; }
-        .del-btn { color: #ff4444; border: 1px solid #ff4444; background: none; padding: 2px 8px; cursor: pointer; font-size: 0.6rem; width: auto; }
-        .clear-all { background: none; border: 1px solid #444; color: #666; padding: 5px 15px; font-size: 0.6rem; cursor: pointer; float: right; }
+        .container { width: 100%; max-width: 650px; text-align: center; border: 2px solid var(--neon); padding: 25px; border-radius: 12px; background: #050505; box-shadow: 0 0 20px rgba(0, 255, 255, 0.1); }
+        h1 { color: var(--neon); letter-spacing: 5px; font-size: 1.4rem; text-transform: uppercase; margin-bottom: 30px; }
+        select, textarea { width: 100%; padding: 15px; margin-bottom: 20px; background: #000; border: 1px solid #333; color: var(--neon); font-family: inherit; box-sizing: border-box; font-size: 0.9rem; outline: none; }
+        select:focus, textarea:focus { border-color: var(--neon); }
+        button { width: 100%; padding: 20px; background: none; border: 2px solid var(--neon); color: var(--neon); font-weight: bold; cursor: pointer; transition: 0.4s; letter-spacing: 2px; }
+        button:hover { background: var(--neon); color: #000; box-shadow: 0 0 25px var(--neon); }
+        #response { margin-top: 30px; text-align: left; line-height: 1.6; color: #fff; font-size: 0.95rem; border-bottom: 2px dashed #222; padding-bottom: 20px; }
+        .archive-section { margin-top: 40px; text-align: left; border-top: 1px solid #222; padding-top: 20px; }
+        .history-item { border-left: 3px solid var(--neon); background: #0a0a0a; padding: 15px; margin-bottom: 15px; }
+        .del-btn { color: #ff4444; border: 1px solid #ff4444; background: none; padding: 4px 10px; cursor: pointer; font-size: 0.65rem; float: right; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>CORE STRATEGIST</h1>
+        
         <select id="expertRole">
             <option value="VC Analyst">VC Analyst (Stress Test)</option>
             <option value="Fractional COO">Fractional COO (Execution Plan)</option>
             <option value="Growth Operator">Growth Operator (Scale Logic)</option>
         </select>
-        <textarea id="userInput" rows="4" placeholder="Sinyal girişi yapın..."></textarea>
-        <button id="execBtn" onclick="executeAnalysis()">EXECUTE SENIOR ANALYSIS</button>
+
+        <textarea id="userInput" rows="5" placeholder="Input strategic signal... (Context, Constraints, Goals)"></textarea>
+
+        <button id="execBtn" onclick="executeAnalysis()">EXECUTE STRATEGIC AUDIT</button>
+
         <div id="response">Waiting for signal...</div>
 
-        <div class="history-box">
-            <button class="clear-all" onclick="clearHistory()">PURGE ARCHIVE</button>
-            <h3 style="color:var(--neon); font-size:0.8rem;">> SIGNAL ARCHIVE</h3>
+        <div class="archive-section">
+            <button onclick="clearHistory()" style="width:auto; padding:5px 10px; font-size:0.6rem; float:right; border-color:#444; color:#666;">PURGE ALL</button>
+            <h3 style="color:var(--neon); font-size:0.8rem; margin-bottom:20px;">> SIGNAL ARCHIVE</h3>
             <div id="historyList"></div>
         </div>
     </div>
@@ -53,9 +52,11 @@
             const input = document.getElementById('userInput').value;
             const role = document.getElementById('expertRole').value;
 
-            if (!input.trim()) return alert("Sinyal gerekli.");
+            if (!input.trim()) return alert("Strategic signal required.");
+            
             btn.disabled = true;
-            resDiv.innerText = "Analyzing...";
+            btn.innerText = "CALIBRATING...";
+            resDiv.innerText = "Strategic Alignment Process Initialized. Please allow a moment for precision processing...";
 
             try {
                 const response = await fetch("https://thecoremethodhowto-backend.onrender.com/chat", {
@@ -64,20 +65,20 @@
                     body: JSON.stringify({ user_input: input, expert_role: role })
                 });
                 const data = await response.json();
-                const output = data.response;
-                resDiv.innerHTML = output.replace(/\n/g, '<br>');
-                saveToHistory(role, input, output);
+                resDiv.innerHTML = data.response.replace(/\n/g, '<br>');
+                saveToHistory(role, input, data.response);
             } catch (err) {
-                resDiv.innerText = "Engine Wake-up... Retry in 20s.";
+                resDiv.innerText = "Connection Drift: Retrying protocol...";
             } finally {
                 btn.disabled = false;
+                btn.innerText = "EXECUTE STRATEGIC AUDIT";
             }
         }
 
         function saveToHistory(role, input, output) {
             let history = JSON.parse(localStorage.getItem('coreHistory') || '[]');
             history.unshift({ id: Date.now(), role, input, output, date: new Date().toLocaleString() });
-            localStorage.setItem('coreHistory', JSON.stringify(history.slice(0, 10)));
+            localStorage.setItem('coreHistory', JSON.stringify(history.slice(0, 15)));
             loadHistory();
         }
 
@@ -86,12 +87,10 @@
             const history = JSON.parse(localStorage.getItem('coreHistory') || '[]');
             list.innerHTML = history.map(item => `
                 <div class="history-item">
-                    <div class="history-header">
-                        <span>[${item.date}] LENS: ${item.role}</span>
-                        <button class="del-btn" onclick="deleteItem(${item.id})">DELETE</button>
-                    </div>
-                    <div class="history-input">Input: "${item.input.substring(0,60)}..."</div>
-                    <div style="font-size:0.8rem; opacity:0.9;">${item.output.substring(0,200).replace(/\n/g, '<br>')}...</div>
+                    <button class="del-btn" onclick="deleteItem(${item.id})">DELETE</button>
+                    <div style="font-size:0.7rem; color:var(--neon); margin-bottom:5px;">[${item.date}] LENS: ${item.role}</div>
+                    <div style="color:#888; font-size:0.75rem; font-style:italic; margin-bottom:10px;">"${item.input.substring(0,80)}..."</div>
+                    <div style="font-size:0.85rem; color:#ccc;">${item.output.substring(0,180).replace(/\n/g, '<br>')}...</div>
                 </div>
             `).join('');
         }
@@ -103,7 +102,7 @@
         }
 
         function clearHistory() {
-            if(confirm("Tüm arşiv silinsin mi?")) { localStorage.removeItem('coreHistory'); loadHistory(); }
+            if(confirm("Confirm Archive Purge?")) { localStorage.removeItem('coreHistory'); loadHistory(); }
         }
     </script>
 </body>
