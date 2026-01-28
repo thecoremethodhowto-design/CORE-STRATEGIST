@@ -34,18 +34,18 @@
         button { 
             width: 100%; padding: 18px; font-weight: 700; cursor: pointer; border-radius: 8px;
             font-family: var(--font-mono); background: none; border: 2px solid var(--neon); color: var(--neon);
-            transition: all 0.3s ease;
+            transition: all 0.3s ease; margin-bottom: 10px;
         }
         button:hover:not(:disabled) { background: var(--neon); color: #000; box-shadow: 0 0 20px rgba(0,255,255,0.2); }
         button:disabled { border-color: #333; color: #444; cursor: wait; }
-        .audit-card { 
-            background: #0a0a0a; border: 1px solid #1a1a1a; 
-            padding: 25px; margin-bottom: 25px; border-radius: 12px;
-        }
+        .purge-btn { border: 1px solid #333; color: #555; font-size: 0.7rem; padding: 10px; }
+        .purge-btn:hover { border-color: var(--red); color: var(--red); }
+        .audit-card { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 25px; margin-bottom: 25px; border-radius: 12px; }
         .audit-content { font-size: 1rem; color: #ccc; max-width: 65ch; }
         .audit-content h3 { font-family: var(--font-mono); color: var(--neon); margin-top: 25px; font-size: 1.1rem; border-bottom: 1px solid #222; padding-bottom: 5px; }
         .status-msg { font-size: 0.8rem; margin-top: 10px; font-family: var(--font-mono); height: 20px; }
         .error { color: var(--red); }
+        .retry-hint { color: var(--neon); }
     </style>
 </head>
 <body>
@@ -66,10 +66,11 @@
             </div>
             <div class="field-group">
                 <label for="userInput">Strategic Signal</label>
-                <textarea id="userInput" rows="5" placeholder="Define logic gates and potential hourglass leaks..."></textarea>
+                <textarea id="userInput" rows="5" placeholder="Define logic gates, context, and perceived hourglass leaks..."></textarea>
                 <div id="statusDisplay" class="status-msg"></div>
             </div>
             <button id="execBtn" onclick="executeAnalysis()">Execute Audit</button>
+            <button class="purge-btn" onclick="purgeArchive()">PURGE ARCHIVE</button>
         </main>
 
         <section id="history" style="margin-top: 40px;"></section>
@@ -78,25 +79,35 @@
     <script>
         const CONFIG = {
             API_URL: "https://thecoremethodhowto-backend.onrender.com/chat",
-            TIMEOUT: 45000
+            TIMEOUT: 45000,
+            MAX_RETRIES: 1
         };
 
-        // 1. SECURE RENDERER (Anti-XSS Defense)
+        // 1. Utility: Secure ID Generation
+        function generateAuditId() {
+            return `LOG-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substr(2, 4).toUpperCase()}`;
+        }
+
+        // 2. Utility: Update Status (Secure textContent)
+        function updateStatus(msg, isError = false) {
+            const statusEl = document.getElementById('statusDisplay');
+            statusEl.textContent = msg;
+            statusEl.className = isError ? 'status-msg error' : 'status-msg';
+        }
+
+        // 3. SECURE RENDERER (Anti-XSS Defense)
         function createSecureAuditContent(rawResponse) {
             const container = document.createElement('div');
             container.className = 'audit-content';
-
-            // Escape whole content first by treating it as text
             const lines = rawResponse.split('\n');
             
             lines.forEach(line => {
-                if (line.startsWith('### ')) {
+                if (line.trim().startsWith('### ')) {
                     const h3 = document.createElement('h3');
-                    h3.textContent = line.replace('### ', '');
+                    h3.textContent = line.replace('### ', '').trim();
                     container.appendChild(h3);
                 } else {
                     const p = document.createElement('p');
-                    // Handle bold markers safely
                     const parts = line.split(/\*\*(.*?)\*\*/g);
                     parts.forEach((part, index) => {
                         if (index % 2 === 1) {
@@ -113,70 +124,30 @@
             return container;
         }
 
-        async function executeAnalysis() {
-            const btn = document.getElementById('execBtn');
-            const status = document.getElementById('statusDisplay');
-            const input = document.getElementById('userInput').value.trim();
+        // 4. Network Layer with Retry & Timeout Logic
+        async function fetchWithRetry(url, options, retries = CONFIG.MAX_RETRIES) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), CONFIG.TIMEOUT);
             
-            if (!navigator.onLine) { status.innerHTML = `<span class="error">Offline.</span>`; return; }
-            if (input.length < 5) { status.innerHTML = `<span class="error">Signal too short.</span>`; return; }
-
-            btn.disabled = true;
-            status.innerHTML = "Processing...";
-
             try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), CONFIG.TIMEOUT);
-
-                const response = await fetch(CONFIG.API_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ 
-                        user_input: input, 
-                        expert_role: document.getElementById('expertRole').value 
-                    }),
-                    signal: controller.signal
-                });
-
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const response = await fetch(url, { ...options, signal: controller.signal });
+                clearTimeout(timeoutId); 
                 
-                const data = await response.json();
-                saveToHistory(input, data.response);
-                renderHistory();
-                document.getElementById('userInput').value = "";
-                status.innerHTML = "";
+                if (response.status === 429) throw new Error("Rate limit exceeded.");
+                if (!response.ok) throw new Error(`Status Error: ${response.status}`);
+                
+                return await response.json();
             } catch (err) {
-                status.innerHTML = `<span class="error">${err.name === 'AbortError' ? 'Timeout' : err.message}</span>`;
-            } finally {
-                btn.disabled = false;
+                clearTimeout(timeoutId);
+                if (retries > 0 && err.name !== 'AbortError') {
+                    updateStatus("Retrying signal...");
+                    return fetchWithRetry(url, options, retries - 1);
+                }
+                throw err;
             }
         }
 
-        function saveToHistory(q, r) {
-            let h = JSON.parse(localStorage.getItem('ch_v4') || "[]");
-            h.unshift({ q, r, d: new Date().toLocaleTimeString() });
-            localStorage.setItem('ch_v4', JSON.stringify(h.slice(0, 10)));
-        }
-
-        function renderHistory() {
-            const historySection = document.getElementById('history');
-            const histData = JSON.parse(localStorage.getItem('ch_v4') || "[]");
-            historySection.innerHTML = "";
-
-            histData.forEach(item => {
-                const card = document.createElement('div');
-                card.className = 'audit-card';
-                
-                const meta = document.createElement('div');
-                meta.style = "font-size:0.7rem; color:#444; font-family:var(--font-mono); margin-bottom:10px;";
-                meta.textContent = `${item.d} // LOG_ID: ${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
-                
-                card.appendChild(meta);
-                card.appendChild(createSecureAuditContent(item.r));
-                historySection.appendChild(card);
-            });
-        }
-        window.onload = renderHistory;
-    </script>
-</body>
-</html>
+        // 5. Main Execution
+        async function executeAnalysis() {
+            const btn = document.getElementById('execBtn');
+            const input = document.getElementById('userInput').value.trim();
