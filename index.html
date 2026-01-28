@@ -20,52 +20,39 @@
             font-family: var(--font-sans); line-height: 1.6;
             margin: 0; padding: 20px; display: flex; justify-content: center;
         }
-        .app-container { width: 100%; max-width: 750px; } /* Reading ergonomics optimized */
-        
+        .app-container { width: 100%; max-width: 750px; }
         header { text-align: center; margin-bottom: 40px; padding: 20px; }
         .logo img { width: 90px; filter: drop-shadow(0 0 8px var(--neon)); margin-bottom: 10px; }
         h1 { color: var(--neon); font-family: var(--font-mono); font-size: 1.4rem; margin: 0; letter-spacing: 3px; }
-
         main { background: var(--card-bg); border: 1px solid #222; padding: 30px; border-radius: 12px; }
         .field-group { margin-bottom: 25px; }
         label { display: block; font-size: 0.75rem; color: var(--neon); margin-bottom: 10px; font-family: var(--font-mono); text-transform: uppercase; }
-        
         select, textarea { 
             width: 100%; padding: 14px; background: #050505; border: 1px solid #333; 
             color: var(--text-main); border-radius: 8px; font-size: 0.95rem; font-family: var(--font-sans);
-            transition: all 0.2s ease;
         }
-        textarea:focus { border-color: var(--neon); outline: none; background: #080808; }
-
-        .btn-group { display: flex; flex-direction: column; gap: 12px; }
         button { 
-            padding: 18px; font-weight: 700; cursor: pointer; border-radius: 8px;
-            font-family: var(--font-mono); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%; padding: 18px; font-weight: 700; cursor: pointer; border-radius: 8px;
+            font-family: var(--font-mono); background: none; border: 2px solid var(--neon); color: var(--neon);
+            transition: all 0.3s ease;
         }
-        #execBtn { background: none; border: 2px solid var(--neon); color: var(--neon); }
-        #execBtn:hover:not(:disabled) { background: var(--neon); color: #000; box-shadow: 0 0 20px rgba(0,255,255,0.2); }
-        #execBtn:disabled { border-color: #333; color: #444; cursor: wait; }
-
-        /* Audit Card Polish */
+        button:hover:not(:disabled) { background: var(--neon); color: #000; box-shadow: 0 0 20px rgba(0,255,255,0.2); }
+        button:disabled { border-color: #333; color: #444; cursor: wait; }
         .audit-card { 
             background: #0a0a0a; border: 1px solid #1a1a1a; 
             padding: 25px; margin-bottom: 25px; border-radius: 12px;
-            max-width: 100%; overflow-wrap: break-word; /* Line length control */
         }
-        .audit-content { font-size: 1rem; color: #ccc; max-width: 65ch; margin: 0 auto; } /* Optimal characters per line */
-        .audit-content h3 { font-family: var(--font-mono); color: var(--neon); margin-top: 25px; font-size: 1.1rem; }
-        
-        .status-msg { font-size: 0.8rem; margin-top: 10px; font-family: var(--font-mono); }
+        .audit-content { font-size: 1rem; color: #ccc; max-width: 65ch; }
+        .audit-content h3 { font-family: var(--font-mono); color: var(--neon); margin-top: 25px; font-size: 1.1rem; border-bottom: 1px solid #222; padding-bottom: 5px; }
+        .status-msg { font-size: 0.8rem; margin-top: 10px; font-family: var(--font-mono); height: 20px; }
         .error { color: var(--red); }
-        .retry-hint { color: var(--neon); font-size: 0.7rem; }
     </style>
 </head>
 <body>
     <div class="app-container">
         <header>
-            <img src="https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=1440,h=1504,fit=crop/fysh94jQ56cgrcdf/logo-dmooxvni4pk0hyyh.png" alt="THE CORE METHOD LOGO" width="90">
+            <img src="https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=1440,h=1504,fit=crop/fysh94jQ56cgrcdf/logo-dmooxvni4pk0hyyh.png" alt="THE CORE METHOD LOGO">
             <h1>CORE STRATEGIST</h1>
-            <p class="slogan" style="color:#555; font-size: 0.7rem; margin-top:5px;">Systemic Logic Audit // v11.0</p>
         </header>
 
         <main>
@@ -79,12 +66,10 @@
             </div>
             <div class="field-group">
                 <label for="userInput">Strategic Signal</label>
-                <textarea id="userInput" rows="5" placeholder="Define context, logic gates, and perceived hourglass leaks..."></textarea>
+                <textarea id="userInput" rows="5" placeholder="Define logic gates and potential hourglass leaks..."></textarea>
                 <div id="statusDisplay" class="status-msg"></div>
             </div>
-            <div class="btn-group">
-                <button id="execBtn" onclick="executeAnalysis()">Execute Audit</button>
-            </div>
+            <button id="execBtn" onclick="executeAnalysis()">Execute Audit</button>
         </main>
 
         <section id="history" style="margin-top: 40px;"></section>
@@ -93,29 +78,39 @@
     <script>
         const CONFIG = {
             API_URL: "https://thecoremethodhowto-backend.onrender.com/chat",
-            TIMEOUT: 45000,
-            MAX_RETRIES: 2
+            TIMEOUT: 45000
         };
 
-        async function fetchWithRetry(url, options, retries = CONFIG.MAX_RETRIES) {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), CONFIG.TIMEOUT);
+        // 1. SECURE RENDERER (Anti-XSS Defense)
+        function createSecureAuditContent(rawResponse) {
+            const container = document.createElement('div');
+            container.className = 'audit-content';
+
+            // Escape whole content first by treating it as text
+            const lines = rawResponse.split('\n');
             
-            try {
-                const response = await fetch(url, { ...options, signal: controller.signal });
-                clearTimeout(timeoutId);
-                
-                if (response.status === 429) throw new Error("Rate limit exceeded. Slow down.");
-                if (!response.ok) throw new Error(`System Friction: ${response.status}`);
-                
-                return await response.json();
-            } catch (err) {
-                if (retries > 0 && err.name !== 'AbortError') {
-                    document.getElementById('statusDisplay').innerHTML = `<span class="retry-hint">Retrying... (${retries} attempts left)</span>`;
-                    return fetchWithRetry(url, options, retries - 1);
+            lines.forEach(line => {
+                if (line.startsWith('### ')) {
+                    const h3 = document.createElement('h3');
+                    h3.textContent = line.replace('### ', '');
+                    container.appendChild(h3);
+                } else {
+                    const p = document.createElement('p');
+                    // Handle bold markers safely
+                    const parts = line.split(/\*\*(.*?)\*\*/g);
+                    parts.forEach((part, index) => {
+                        if (index % 2 === 1) {
+                            const strong = document.createElement('strong');
+                            strong.textContent = part;
+                            p.appendChild(strong);
+                        } else {
+                            p.appendChild(document.createTextNode(part));
+                        }
+                    });
+                    container.appendChild(p);
                 }
-                throw err;
-            }
+            });
+            return container;
         }
 
         async function executeAnalysis() {
@@ -123,48 +118,63 @@
             const status = document.getElementById('statusDisplay');
             const input = document.getElementById('userInput').value.trim();
             
-            if (!navigator.onLine) {
-                status.innerHTML = `<span class="error">Offline: Check your network connection.</span>`;
-                return;
-            }
+            if (!navigator.onLine) { status.innerHTML = `<span class="error">Offline.</span>`; return; }
+            if (input.length < 5) { status.innerHTML = `<span class="error">Signal too short.</span>`; return; }
 
             btn.disabled = true;
-            status.innerHTML = "Processing Signal...";
+            status.innerHTML = "Processing...";
 
             try {
-                const data = await fetchWithRetry(CONFIG.API_URL, {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), CONFIG.TIMEOUT);
+
+                const response = await fetch(CONFIG.API_URL, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ user_input: input, expert_role: document.getElementById('expertRole').value })
+                    body: JSON.stringify({ 
+                        user_input: input, 
+                        expert_role: document.getElementById('expertRole').value 
+                    }),
+                    signal: controller.signal
                 });
 
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                
+                const data = await response.json();
                 saveToHistory(input, data.response);
                 renderHistory();
                 document.getElementById('userInput').value = "";
                 status.innerHTML = "";
             } catch (err) {
-                status.innerHTML = `<span class="error">${err.name === 'AbortError' ? 'Timeout: Server took too long.' : err.message}</span>`;
+                status.innerHTML = `<span class="error">${err.name === 'AbortError' ? 'Timeout' : err.message}</span>`;
             } finally {
                 btn.disabled = false;
             }
         }
 
         function saveToHistory(q, r) {
-            let h = JSON.parse(localStorage.getItem('ch_v3') || "[]");
+            let h = JSON.parse(localStorage.getItem('ch_v4') || "[]");
             h.unshift({ q, r, d: new Date().toLocaleTimeString() });
-            localStorage.setItem('ch_v3', JSON.stringify(h.slice(0, 10)));
+            localStorage.setItem('ch_v4', JSON.stringify(h.slice(0, 10)));
         }
 
         function renderHistory() {
-            const hist = JSON.parse(localStorage.getItem('ch_v3') || "[]");
-            document.getElementById('history').innerHTML = hist.map(i => `
-                <div class="audit-card">
-                    <div style="font-size:0.7rem; color:#444; font-family:var(--font-mono); margin-bottom:10px;">${i.d} // LOG_ID: ${Math.random().toString(36).substr(2, 5).toUpperCase()}</div>
-                    <div class="audit-content">
-                        ${i.r.replace(/\n/g, '<br>').replace(/### (.*?)<br>/g, '<h3>$1</h3>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}
-                    </div>
-                </div>
-            `).join('');
+            const historySection = document.getElementById('history');
+            const histData = JSON.parse(localStorage.getItem('ch_v4') || "[]");
+            historySection.innerHTML = "";
+
+            histData.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'audit-card';
+                
+                const meta = document.createElement('div');
+                meta.style = "font-size:0.7rem; color:#444; font-family:var(--font-mono); margin-bottom:10px;";
+                meta.textContent = `${item.d} // LOG_ID: ${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
+                
+                card.appendChild(meta);
+                card.appendChild(createSecureAuditContent(item.r));
+                historySection.appendChild(card);
+            });
         }
         window.onload = renderHistory;
     </script>
