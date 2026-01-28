@@ -119,5 +119,10 @@
         } finally {
             btn.disabled = false;
         }
+        // Backend hata kodu dönerse bunu yakala ve ekrana bas
+          if (!response.ok) {
+             const errorData = await response.json();
+              throw new Error(errorData.detail || `Server Error: ${response.status}`);
+}
     };
 </script>
