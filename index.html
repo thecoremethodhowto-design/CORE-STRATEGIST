@@ -1,29 +1,76 @@
-async function executeAnalysis() {
-    const btn = document.getElementById('execBtn');
-    const resDiv = document.getElementById('response');
-    const input = document.getElementById('userInput').value;
-    const role = document.getElementById('expertRole').value;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE CORE METHOD | CORE STRATEGIST</title>
+    <style>
+        :root { --neon: #00FFFF; --bg: #000; --text: #e0e0e0; }
+        body { background: var(--bg); color: var(--text); font-family: 'Courier New', Courier, monospace; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .container { width: 95%; max-width: 650px; text-align: center; border: 2px solid var(--neon); padding: 40px; box-shadow: 0 0 30px rgba(0, 255, 255, 0.1); border-radius: 12px; }
+        .logo img { width: 120px; margin-bottom: 20px; }
+        h1 { color: var(--neon); letter-spacing: 5px; font-size: 1.4rem; margin: 10px 0; }
+        .slogan { color: #666; font-size: 0.7rem; text-transform: uppercase; margin-bottom: 30px; }
+        label { display: block; text-align: left; font-size: 0.8rem; color: var(--neon); margin-bottom: 8px; font-weight: bold; }
+        select, textarea { width: 100%; padding: 15px; margin-bottom: 25px; background: #0a0a0a; border: 1px solid #333; color: var(--neon); border-radius: 4px; font-family: inherit; box-sizing: border-box; outline: none; }
+        button { width: 100%; padding: 20px; background: none; border: 2px solid var(--neon); color: var(--neon); font-weight: bold; cursor: pointer; transition: 0.4s; letter-spacing: 2px; }
+        button:hover { background: var(--neon); color: #000; box-shadow: 0 0 20px var(--neon); }
+        #response { margin-top: 30px; padding: 20px; border-top: 1px solid #222; text-align: left; line-height: 1.7; font-size: 0.95rem; color: #fff; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=1440,h=1504,fit=crop/fysh94jQ56cgrcdf/logo-dmooxvni4pk0hyyh.png" alt="Logo">
+            <h1>CORE STRATEGIST</h1>
+            <div class="slogan">Senior Logic Gate Engine | @THECOREMETHOD</div>
+        </div>
 
-    if (!input.trim()) return alert("Signal input required.");
+        <label>> SELECT EXPERT LENS:</label>
+        <select id="expertRole">
+            <option value="VC Analyst">VC Analyst (Risk & Moat Audit)</option>
+            <option value="Fractional COO">Fractional COO (Ops & Systems Audit)</option>
+            <option value="Growth Operator">Growth Operator (Scale Logic)</option>
+        </select>
 
-    btn.innerText = "CALIBRATING SIGNAL...";
-    btn.disabled = true;
-    resDiv.innerHTML = "<em>PROTOCOL INITIALIZED: Calibrating against 2026 Resilience Standards... (If the engine is asleep, this may take up to 45s)</em>";
+        <label>> INPUT STRATEGIC SIGNAL:</label>
+        <textarea id="userInput" rows="5" placeholder="Define your context, goal, and constraints..."></textarea>
 
-    try {
-        const response = await fetch("https://thecoremethodhowto-backend.onrender.com/chat", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ user_input: input, expert_role: role })
-        });
+        <button id="execBtn" onclick="executeAnalysis()">EXECUTE SENIOR ANALYSIS</button>
 
-        const data = await response.json();
-        // Markdown formatını korumak için innerHTML ve satır sonu dönüşümü
-        resDiv.innerHTML = (data.response || "Error: Engine Timeout.").replace(/\n/g, '<br>');
-    } catch (err) {
-        resDiv.innerText = "System Wake-up: The engine is initializing. Please retry in 20 seconds.";
-    } finally {
-        btn.innerText = "EXECUTE SENIOR ANALYSIS";
-        btn.disabled = false;
-    }
-}
+        <div id="response">Waiting for signal...</div>
+    </div>
+
+    <script>
+        async function executeAnalysis() {
+            const btn = document.getElementById('execBtn');
+            const resDiv = document.getElementById('response');
+            const input = document.getElementById('userInput').value;
+            const role = document.getElementById('expertRole').value;
+
+            if (!input.trim()) return alert("Signal input required.");
+
+            btn.innerText = "CALIBRATING SIGNAL...";
+            btn.disabled = true;
+            resDiv.innerHTML = "<em>PROTOCOL INITIALIZED: Calibrating against 2026 Resilience Standards... (Engine wake-up: ~30s)</em>";
+
+            try {
+                const response = await fetch("https://thecoremethodhowto-backend.onrender.com/chat", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ user_input: input, expert_role: role })
+                });
+
+                const data = await response.json();
+                // Formatting Markdown to HTML line breaks
+                resDiv.innerHTML = (data.response || "Error: Logic Gate Offline.").replace(/\n/g, '<br>');
+            } catch (err) {
+                resDiv.innerText = "System Wake-up: The engine is initializing. Please retry in 20 seconds.";
+            } finally {
+                btn.innerText = "EXECUTE SENIOR ANALYSIS";
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
