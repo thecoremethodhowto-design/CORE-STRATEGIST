@@ -6,16 +6,16 @@
     <style>
         :root { --neon: #00FFFF; --bg: #000; --text: #e0e0e0; --red: #FF3131; }
         body { background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; display: flex; justify-content: center; padding: 20px; }
-        .container { width: 100%; max-width: 750px; text-align: center; border: 2px solid var(--neon); padding: 35px; border-radius: 12px; }
-        .logo img { width: 110px; margin-bottom: 15px; }
-        h1 { color: var(--neon); letter-spacing: 5px; font-size: 1.4rem; margin-bottom: 30px; }
-        .slogan { color: #555; font-size: 0.75rem; text-transform: uppercase; margin-bottom: 25px; letter-spacing: 2px; }
+        .container { width: 100%; max-width: 750px; text-align: center; border: 2px solid var(--neon); padding: 35px; border-radius: 12px; box-shadow: 0 0 25px rgba(0, 255, 255, 0.1); }
+        .logo img { width: 110px; margin-bottom: 10px; }
+        h1 { color: var(--neon); letter-spacing: 4px; font-size: 1.4rem; margin: 0; }
+        .slogan { color: #555; font-size: 0.7rem; text-transform: uppercase; margin-bottom: 30px; letter-spacing: 1px; }
         select, textarea { width: 100%; padding: 15px; margin-bottom: 20px; background: #0a0a0a; border: 1px solid #333; color: var(--neon); border-radius: 4px; outline: none; font-family: inherit; }
         button { width: 100%; padding: 20px; background: none; border: 2px solid var(--neon); color: var(--neon); font-weight: bold; cursor: pointer; transition: 0.4s; letter-spacing: 2px; }
-        button:hover { background: var(--neon); color: #000; box-shadow: 0 0 20px var(--neon); }
+        button:hover { background: var(--neon); color: #000; }
         .purge-btn { border-color: var(--red); color: var(--red); font-size: 0.75rem; margin-top: 15px; padding: 12px; }
         #history { margin-top: 40px; text-align: left; }
-        .audit-item { background: #080808; border-left: 4px solid var(--neon); padding: 25px; margin-bottom: 25px; border-radius: 0 8px 8px 0; }
+        .audit-item { background: #080808; border-left: 4px solid var(--neon); padding: 25px; margin-bottom: 25px; }
         h3 { color: var(--neon); margin-top: 20px; font-size: 1.1rem; border-bottom: 1px solid #222; padding-bottom: 5px; }
         strong { color: var(--neon); }
     </style>
@@ -24,16 +24,16 @@
     <div class="container">
         <div class="logo"><img src="https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=1440,h=1504,fit=crop/fysh94jQ56cgrcdf/logo-dmooxvni4pk0hyyh.png">
             <h1>CORE STRATEGIST</h1>
-            <div class="slogan">Senior Logic Gate Engine | @THECOREMETHOD</div>
+            <div class="slogan">Mastering the Core, Unlocking the Potential.</div>
         </div>
         <select id="expertRole">
             <option value="VC Analyst">VC Analyst (Risk & Moat)</option>
             <option value="Fractional COO">Fractional COO (Ops & Systems)</option>
             <option value="Growth Operator">Growth Operator (Scale Logic)</option>
         </select>
-        <textarea id="userInput" rows="5" placeholder="Input strategic signal (Any language)..."></textarea>
+        <textarea id="userInput" rows="5" placeholder="Input strategic signal in any language..."></textarea>
         <button id="execBtn" onclick="executeAnalysis()">EXECUTE SENIOR ANALYSIS</button>
-        <button class="purge-btn" onclick="purgeArchive()">PURGE ARCHIVE</button>
+        <button class="purge-btn" onclick="purgeArchive()">PURGE STRATEGIC ARCHIVE</button>
         <div id="history"></div>
     </div>
 
@@ -44,7 +44,7 @@
             const input = document.getElementById('userInput').value;
             const role = document.getElementById('expertRole').value;
             if (!input.trim()) return;
-            btn.disabled = true; btn.innerText = "AUDITING SIGNAL...";
+            btn.disabled = true; btn.innerText = "AUDITING...";
             try {
                 const response = await fetch("https://thecoremethodhowto-backend.onrender.com/chat", {
                     method: "POST", headers: { "Content-Type": "application/json" },
@@ -54,7 +54,7 @@
                 saveToHistory(input, data.response, role);
                 loadHistory();
                 document.getElementById('userInput').value = "";
-            } catch (err) { alert("Logic Drift detected."); } finally { btn.disabled = false; btn.innerText = "EXECUTE SENIOR ANALYSIS"; }
+            } catch (err) { alert("Logic Gate Error."); } finally { btn.disabled = false; btn.innerText = "EXECUTE SENIOR ANALYSIS"; }
         }
         function saveToHistory(query, res, role) {
             let history = JSON.parse(localStorage.getItem('core_history') || "[]");
