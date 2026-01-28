@@ -5,54 +5,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>THE CORE METHOD | CORE STRATEGIST</title>
     <style>
-        :root { --neon: #00FFFF; --bg: #000; --text: #e0e0e0; }
-        body { background: var(--bg); color: var(--text); font-family: 'Courier New', Courier, monospace; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .container { width: 95%; max-width: 650px; text-align: center; border: 2px solid var(--neon); padding: 40px; box-shadow: 0 0 30px rgba(0, 255, 255, 0.1); border-radius: 12px; }
-        .logo img { width: 120px; margin-bottom: 20px; }
-        h1 { color: var(--neon); letter-spacing: 5px; font-size: 1.4rem; margin: 10px 0; }
-        .slogan { color: #666; font-size: 0.7rem; text-transform: uppercase; margin-bottom: 30px; }
-        label { display: block; text-align: left; font-size: 0.8rem; color: var(--neon); margin-bottom: 8px; font-weight: bold; }
-        select, textarea { width: 100%; padding: 15px; margin-bottom: 25px; background: #0a0a0a; border: 1px solid #333; color: var(--neon); border-radius: 4px; font-family: inherit; box-sizing: border-box; outline: none; }
-        button { width: 100%; padding: 20px; background: none; border: 2px solid var(--neon); color: var(--neon); font-weight: bold; cursor: pointer; transition: 0.4s; letter-spacing: 2px; }
-        button:hover { background: var(--neon); color: #000; box-shadow: 0 0 20px var(--neon); }
-        #response { margin-top: 30px; padding: 20px; border-top: 1px solid #222; text-align: left; line-height: 1.7; font-size: 0.95rem; color: #fff; }
+        :root { --neon: #00FFFF; --bg: #000; --text: #e0e0e0; --red: #FF3131; }
+        body { background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; display: flex; justify-content: center; padding: 20px; }
+        .container { width: 100%; max-width: 700px; text-align: center; border: 2px solid var(--neon); padding: 30px; border-radius: 12px; box-shadow: 0 0 20px rgba(0, 255, 255, 0.05); }
+        .logo img { width: 100px; margin-bottom: 15px; }
+        h1 { color: var(--neon); letter-spacing: 4px; font-size: 1.2rem; }
+        select, textarea { width: 100%; padding: 15px; margin-bottom: 20px; background: #0a0a0a; border: 1px solid #333; color: var(--neon); border-radius: 4px; box-sizing: border-box; outline: none; }
+        button { width: 100%; padding: 18px; background: none; border: 2px solid var(--neon); color: var(--neon); font-weight: bold; cursor: pointer; transition: 0.3s; letter-spacing: 2px; margin-bottom: 10px; }
+        button:hover { background: var(--neon); color: #000; }
+        .purge-btn { border-color: var(--red); color: var(--red); font-size: 0.7rem; padding: 10px; }
+        .purge-btn:hover { background: var(--red); color: #fff; }
+        #history { margin-top: 40px; text-align: left; }
+        .audit-item { background: #050505; border: 1px solid #1a1a1a; padding: 20px; margin-bottom: 20px; border-radius: 8px; position: relative; }
+        .audit-date { font-size: 0.7rem; color: #555; margin-bottom: 10px; }
+        h3 { color: var(--neon); border-bottom: 1px solid #222; padding-bottom: 5px; font-size: 1rem; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="logo">
             <img src="https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=1440,h=1504,fit=crop/fysh94jQ56cgrcdf/logo-dmooxvni4pk0hyyh.png" alt="Logo">
-            <h1>CORE STRATEGIST</h1>
-            <div class="slogan">Senior Logic Gate Engine | @THECOREMETHOD</div>
+            <h1>CORE STRATEGIST v6.0</h1>
         </div>
 
-        <label>> SELECT EXPERT LENS:</label>
         <select id="expertRole">
-            <option value="VC Analyst">VC Analyst (Risk & Moat Audit)</option>
-            <option value="Fractional COO">Fractional COO (Ops & Systems Audit)</option>
-            <option value="Growth Operator">Growth Operator (Scale Logic)</option>
+            <option value="VC Analyst">VC Analyst (Risk & Moat)</option>
+            <option value="Fractional COO">Fractional COO (Systems)</option>
+            <option value="Growth Operator">Growth Operator (Scale)</option>
         </select>
 
-        <label>> INPUT STRATEGIC SIGNAL:</label>
-        <textarea id="userInput" rows="5" placeholder="Define your context, goal, and constraints..."></textarea>
+        <textarea id="userInput" rows="4" placeholder="Input strategic signal..."></textarea>
+        <button id="execBtn" onclick="executeAnalysis()">EXECUTE ANALYSIS</button>
+        <button class="purge-btn" onclick="purgeArchive()">PURGE ARCHIVE</button>
 
-        <button id="execBtn" onclick="executeAnalysis()">EXECUTE SENIOR ANALYSIS</button>
-
-        <div id="response">Waiting for signal...</div>
+        <div id="history"></div>
     </div>
 
     <script>
+        window.onload = loadHistory;
+
         async function executeAnalysis() {
             const btn = document.getElementById('execBtn');
-            const resDiv = document.getElementById('response');
             const input = document.getElementById('userInput').value;
             const role = document.getElementById('expertRole').value;
 
-            if (!input.trim()) return alert("Signal input required.");
-
-            btn.innerText = "CALIBRATING SIGNAL...";
-            btn.disabled = true;
-            resDiv.innerHTML = "<em>PROTOCOL INITIALIZED: Calibrating against 2026 Resilience Standards...</em>";
+            if (!input.trim()) return alert("Signal required.");
+            btn.disabled = true; btn.innerText = "AUDITING...";
 
             try {
                 const response = await fetch("https://thecoremethodhowto-backend.onrender.com/chat", {
@@ -62,13 +60,44 @@
                 });
 
                 const data = await response.json();
-                // Format Markdown line breaks and keep logic intact
-                resDiv.innerHTML = (data.response || "Error: Logic Gate Offline.").replace(/\n/g, '<br>');
+                saveToHistory(input, data.response, role);
+                loadHistory();
+                document.getElementById('userInput').value = "";
             } catch (err) {
-                resDiv.innerText = "System Wake-up: The engine is initializing. Please retry in 20 seconds.";
+                alert("Connection Drift detected.");
             } finally {
-                btn.innerText = "EXECUTE SENIOR ANALYSIS";
-                btn.disabled = false;
+                btn.disabled = false; btn.innerText = "EXECUTE ANALYSIS";
+            }
+        }
+
+        function saveToHistory(query, res, role) {
+            let history = JSON.parse(localStorage.getItem('core_history') || "[]");
+            history.unshift({ query, res, role, date: new Date().toLocaleString() });
+            localStorage.setItem('core_history', JSON.stringify(history));
+        }
+
+        function loadHistory() {
+            const container = document.getElementById('history');
+            let history = JSON.parse(localStorage.getItem('core_history') || "[]");
+            container.innerHTML = history.map(item => `
+                <div class="audit-item">
+                    <div class="audit-date">${item.date} | LENS: ${item.role}</div>
+                    <div style="color:#666; font-style:italic; margin-bottom:15px;">Input: ${item.query}</div>
+                    <div>${formatResponse(item.res)}</div>
+                </div>
+            `).join('');
+        }
+
+        function formatResponse(text) {
+            return text.replace(/\n/g, '<br>')
+                       .replace(/### (.*?)<br>/g, '<h3>$1</h3>')
+                       .replace(/\*\*(.*?)\*\*/g, '<strong style="color:#00FFFF;">$1</strong>');
+        }
+
+        function purgeArchive() {
+            if(confirm("Confirm Archive Purge? All signals will be eliminated.")) {
+                localStorage.removeItem('core_history');
+                loadHistory();
             }
         }
     </script>
