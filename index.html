@@ -29,7 +29,6 @@
         }
         .app-container { width: 100%; max-width: 750px; }
         header { text-align: center; margin-bottom: 40px; padding: 20px; }
-        .logo img { width: 90px; filter: drop-shadow(0 0 8px var(--neon)); margin-bottom: 10px; }
         h1 { color: var(--neon); font-family: var(--font-mono); font-size: 1.4rem; margin: 0; letter-spacing: 3px; }
         
         main { background: var(--card-bg); border: 1px solid #222; padding: 30px; border-radius: 12px; }
@@ -51,14 +50,13 @@
         button:hover:not(:disabled) { background: var(--neon); color: #000; box-shadow: 0 0 20px rgba(0,255,255,0.2); }
         button:disabled { border-color: #333; color: #444; cursor: wait; }
 
-        .purge-btn { border: 1px solid #333; color: #555; font-size: 0.7rem; padding: 10px; margin-top: 10px; }
+        .purge-btn { border: 1px solid #333; color: #555; font-size: 0.7rem; padding: 10px; margin-top: 10px; background: transparent; width: 100%; cursor: pointer; }
         .purge-btn:hover { border-color: var(--red); color: var(--red); }
 
         #statusDisplay { font-size: 0.8rem; margin-top: 10px; font-family: var(--font-mono); height: 20px; }
         .error { color: var(--red); }
         .success { color: var(--neon); }
 
-        /* History Rendering */
         .audit-card { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 25px; margin-bottom: 25px; border-radius: 12px; }
         .audit-content h3 { font-family: var(--font-mono); color: var(--neon); margin-top: 20px; font-size: 1rem; border-bottom: 1px solid #222; padding-bottom: 5px; }
         
@@ -68,7 +66,6 @@
 <body>
     <div class="app-container">
         <header>
-            <img src="https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=1440,h=1504,fit=crop/fysh94jQ56cgrcdf/logo-dmooxvni4pk0hyyh.png" alt="LOGO">
             <h1>CORE STRATEGIST</h1>
         </header>
 
@@ -102,18 +99,14 @@
             API_URL: "https://thecoremethodhowto-backend.onrender.com/chat"
         };
 
-        // Sayfa yüklendiğinde geçmişi yükle ve PWA kontrolü yap
         window.onload = () => {
             renderHistory();
             if (!window.matchMedia('(display-mode: standalone)').matches) {
-                document.getElementById('installGuide').style.display = 'block';
-                if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
-                    document.getElementById('guideText').innerText = 'iOS: Tap "Share" and "Add to Home Screen".';
-                }
+                const guide = document.getElementById('installGuide');
+                if (guide) guide.style.display = 'block';
             }
         };
 
-        // ANA ANALİZ FONKSİYONU
         window.executeAnalysis = async function() {
             const btn = document.getElementById('execBtn');
             const input = document.getElementById('userInput').value.trim();
@@ -126,7 +119,7 @@
             }
 
             btn.disabled = true;
-            status.textContent = ">>> CONNECTING TO LOGIC GATE...";
+            status.textContent = ">>> ANALYZING SIGNAL...";
             status.className = "success";
 
             try {
@@ -146,14 +139,13 @@
 
             } catch (err) {
                 console.error("Critical Error:", err);
-                status.textContent = ">>> SYSTEM WAKE-UP: RETRY IN 20 SECONDS.";
+                status.textContent = ">>> CONNECTION ERROR. RETRY IN 20s.";
                 status.className = "error";
             } finally {
                 btn.disabled = false;
             }
         };
 
-        // GEÇMİŞ YÖNETİMİ
         function saveToHistory(role, input, output) {
             let history = JSON.parse(localStorage.getItem('coreHistory') || '[]');
             const newEntry = {
@@ -198,4 +190,10 @@
 
         window.purgeArchive = function() {
             if(confirm("PURGE ALL ARCHIVED SIGNALS?")) {
-                localStorage.removeItem
+                localStorage.removeItem('coreHistory');
+                renderHistory();
+            }
+        };
+    </script>
+</body>
+</html>
