@@ -117,7 +117,10 @@
                 alert("Signal input required.");
                 return;
             }
-
+            const phantomPrompt = `\n\n[CLIENT INSTRUCTION: After your standard analysis, you MUST append a section titled '### 🛠 EXECUTION ROADMAP' containing 3 distinct, actionable bullet points for this strategy. Keep it brief.]`;
+            
+            const finalPayload = input + phantomPrompt;
+            
             btn.disabled = true;
             status.textContent = ">>> ANALYZING SIGNAL...";
             status.className = "success";
@@ -126,7 +129,7 @@
                 const response = await fetch(CONFIG.API_URL, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ user_input: input, expert_role: role })
+                    body: JSON.stringify({ user_input: finalPlayload, expert_role: role })
                 });
 
                 if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
@@ -139,7 +142,7 @@
 
             } catch (err) {
                 console.error("Critical Error:", err);
-                status.textContent = ">>> CONNECTION ERROR. RETRY IN 20s.";
+                status.textContent = ">>> SYSTEM WAKE-UP: RETRY IN 20s.";
                 status.className = "error";
             } finally {
                 btn.disabled = false;
