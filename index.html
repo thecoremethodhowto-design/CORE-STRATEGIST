@@ -75,25 +75,33 @@
 
         <section id="history" style="margin-top: 40px;"></section>
     </div>
-
-    <script>
-    // Config nesnesinin tanımlandığından emin olun
+<script>
+    // 1. AYARLAR: URL sonuna '/chat' eklendi.
     const CONFIG = {
-        API_URL: "https://thecoremethodhowto-backend.onrender.com",
-        TIMEOUT: 45000,
-        MAX_RETRIES: 1
+        API_URL: "https://thecoremethodhowto-backend.onrender.com/chat",
+        TIMEOUT: 45000
     };
 
-    // Fonksiyonu pencereye (window) bağlayarak görünür kılalım
+    // Sayfa yüklendiğinde geçmişi getir
+    window.onload = renderHistory;
+
+    // 2. ANA FONKSİYON: Execute Audit
     window.executeAnalysis = async function() {
         const btn = document.getElementById('execBtn');
         const input = document.getElementById('userInput').value.trim();
+        const role = document.getElementById('expertRole').value;
         const status = document.getElementById('statusDisplay');
         
-        if (!input) return;
+        if (!input) {
+            alert("Please input a strategy signal.");
+            return;
+        }
 
+        // UI Durumu: Yükleniyor
         btn.disabled = true;
-        if (status) status.textContent = "Auditing...";
+        btn.innerHTML = "AUDITING SIGNAL <span style='animation: blink 1s infinite'>...</span>";
+        if (status) status.textContent = "Connecting to Logic Gate...";
+        if (status) status.className = "status-msg retry-hint";
 
         try {
             const response = await fetch(CONFIG.API_URL, {
@@ -101,28 +109,98 @@
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ 
                     user_input: input, 
-                    expert_role: document.getElementById('expertRole').value 
+                    expert_role: role 
                 })
             });
 
+            // Backend hatası varsa yakala
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail || `Server Error: ${response.status}`);
+            }
+
             const data = await response.json();
-            // Analizi kaydetme ve render etme işlemleri...
-            console.log("Success:", data);
+            const resultText = data.response;
+
+            // 3. SONUCU KAYDET VE GÖSTER
+            console.log("Audit Complete:", resultText);
+            if (status) status.textContent = "Audit Complete.";
+            if (status) status.className = "status-msg"; // Rengi normale döndür
             
-            // saveToHistory ve renderHistory fonksiyonlarınızın da burada tanımlı olduğundan emin olun
-            if (typeof saveToHistory === 'function') saveToHistory(input, data.response);
-            if (typeof renderHistory === 'function') renderHistory();
+            saveToHistory(role, input, resultText);
 
         } catch (err) {
-            console.error("Connection Error:", err);
-            if (status) status.textContent = "Connection Error.";
+            console.error("Execution Error:", err);
+            if (status) {
+                status.textContent = "Connection Failed: Engine is warming up or offline.";
+                status.className = "status-msg error";
+            }
+            alert("⚠️ Connection Error: " + err.message);
         } finally {
+            // UI Durumu: Normale dön
             btn.disabled = false;
+            btn.innerText = "Execute Audit";
         }
-        // Backend hata kodu dönerse bunu yakala ve ekrana bas
-          if (!response.ok) {
-             const errorData = await response.json();
-              throw new Error(errorData.detail || `Server Error: ${response.status}`);
-}
+    };
+
+    // 4. EKSİK OLAN FONKSİYONLAR (GERİ GETİRİLDİ)
+
+    function saveToHistory(role, input, output) {
+        let history = JSON.parse(localStorage.getItem('coreHistory') || '[]');
+        const newEntry = {
+            date: new Date().toLocaleString(),
+            role: role,
+            input: input,
+            output: output
+        };
+        // En yeni en başa
+        history.unshift(newEntry);
+        // Sadece son 10 kayıt
+        if (history.length > 10) history.pop();
+        
+        localStorage.setItem('coreHistory', JSON.stringify(history));
+        renderHistory();
+    }
+
+    function renderHistory() {
+        const historySection = document.getElementById('history');
+        const history = JSON.parse(localStorage.getItem('coreHistory') || '[]');
+        
+        if (history.length === 0) {
+            historySection.innerHTML = "<div style='text-align:center; color:#444; font-size:0.8rem;'>No signals archived.</div>";
+            return;
+        }
+
+        // Yeni tasarıma uygun HTML yapısı
+        historySection.innerHTML = history.map((item, index) => `
+            <div class="audit-card">
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px; border-bottom:1px solid #222; padding-bottom:10px;">
+                    <span style="color:var(--neon); font-family:var(--font-mono); font-size:0.75rem;">${item.role.toUpperCase()}</span>
+                    <span style="color:#555; font-size:0.7rem;">${item.date}</span>
+                </div>
+                <div style="margin-bottom:15px; font-style:italic; color:#777; font-size:0.85rem;">
+                    "${item.input.substring(0, 80)}${item.input.length > 80 ? '...' : ''}"
+                </div>
+                <div class="audit-content">
+                    ${formatOutput(item.output)}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Markdown benzeri başlıkları HTML'e çeviren yardımcı fonksiyon
+    function formatOutput(text) {
+        if (!text) return "";
+        // ### Headers'ı h3 etiketiyle değiştir
+        return text.replace(/### (.*?)/g, "<h3>$1</h3>")
+                   .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+    }
+
+    // Buton onclick="purgeArchive()" buna bağlı
+    window.purgeArchive = function() {
+        if(confirm("SYSTEM WARNING: Purge all archived strategic signals?")) {
+            localStorage.removeItem('coreHistory');
+            renderHistory();
+        }
     };
 </script>
