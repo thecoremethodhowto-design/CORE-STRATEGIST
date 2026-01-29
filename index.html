@@ -4,10 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>THE CORE METHOD | CORE STRATEGIST</title>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#00FFFF">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+
     <style>
         :root { 
             --neon: #00FFFF; --bg: #000; --card-bg: #0d0d0d; 
@@ -24,40 +31,50 @@
         header { text-align: center; margin-bottom: 40px; padding: 20px; }
         .logo img { width: 90px; filter: drop-shadow(0 0 8px var(--neon)); margin-bottom: 10px; }
         h1 { color: var(--neon); font-family: var(--font-mono); font-size: 1.4rem; margin: 0; letter-spacing: 3px; }
+        
         main { background: var(--card-bg); border: 1px solid #222; padding: 30px; border-radius: 12px; }
         .field-group { margin-bottom: 25px; }
         label { display: block; font-size: 0.75rem; color: var(--neon); margin-bottom: 10px; font-family: var(--font-mono); text-transform: uppercase; }
+        
         select, textarea { 
             width: 100%; padding: 14px; background: #050505; border: 1px solid #333; 
             color: var(--text-main); border-radius: 8px; font-size: 0.95rem; font-family: var(--font-sans);
+            outline: none;
         }
+        select:focus, textarea:focus { border-color: var(--neon); }
+
         button { 
             width: 100%; padding: 18px; font-weight: 700; cursor: pointer; border-radius: 8px;
             font-family: var(--font-mono); background: none; border: 2px solid var(--neon); color: var(--neon);
-            transition: all 0.3s ease; margin-bottom: 10px;
+            transition: all 0.3s ease; margin-bottom: 10px; text-transform: uppercase;
         }
         button:hover:not(:disabled) { background: var(--neon); color: #000; box-shadow: 0 0 20px rgba(0,255,255,0.2); }
         button:disabled { border-color: #333; color: #444; cursor: wait; }
-        .purge-btn { border: 1px solid #333; color: #555; font-size: 0.7rem; padding: 10px; }
+
+        .purge-btn { border: 1px solid #333; color: #555; font-size: 0.7rem; padding: 10px; margin-top: 10px; }
         .purge-btn:hover { border-color: var(--red); color: var(--red); }
-        .audit-card { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 25px; margin-bottom: 25px; border-radius: 12px; }
-        .audit-content { font-size: 1rem; color: #ccc; max-width: 65ch; }
-        .audit-content h3 { font-family: var(--font-mono); color: var(--neon); margin-top: 25px; font-size: 1.1rem; border-bottom: 1px solid #222; padding-bottom: 5px; }
-        .status-msg { font-size: 0.8rem; margin-top: 10px; font-family: var(--font-mono); height: 20px; }
+
+        #statusDisplay { font-size: 0.8rem; margin-top: 10px; font-family: var(--font-mono); height: 20px; }
         .error { color: var(--red); }
-        .retry-hint { color: var(--neon); }
+        .success { color: var(--neon); }
+
+        /* History Rendering */
+        .audit-card { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 25px; margin-bottom: 25px; border-radius: 12px; }
+        .audit-content h3 { font-family: var(--font-mono); color: var(--neon); margin-top: 20px; font-size: 1rem; border-bottom: 1px solid #222; padding-bottom: 5px; }
+        
+        #installGuide { margin-top: 20px; font-size: 0.7rem; color: #444; border: 1px dashed #222; padding: 10px; display: none; text-align: center; }
     </style>
 </head>
 <body>
     <div class="app-container">
         <header>
-            <img src="https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=1440,h=1504,fit=crop/fysh94jQ56cgrcdf/logo-dmooxvni4pk0hyyh.png" alt="THE CORE METHOD LOGO">
+            <img src="https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=1440,h=1504,fit=crop/fysh94jQ56cgrcdf/logo-dmooxvni4pk0hyyh.png" alt="LOGO">
             <h1>CORE STRATEGIST</h1>
         </header>
 
         <main>
             <div class="field-group">
-                <label for="expertRole">Analysis Lens</label>
+                <label for="expertRole">> Analysis Lens</label>
                 <select id="expertRole">
                     <option value="VC Analyst">VC Analyst (Risk & Moat)</option>
                     <option value="Fractional COO">Fractional COO (Ops & Systems)</option>
@@ -65,142 +82,120 @@
                 </select>
             </div>
             <div class="field-group">
-                <label for="userInput">Strategic Signal</label>
-                <textarea id="userInput" rows="5" placeholder="Define logic gates, context, and perceived hourglass leaks..."></textarea>
-                <div id="statusDisplay" class="status-msg"></div>
+                <label for="userInput">> Strategic Signal</label>
+                <textarea id="userInput" rows="5" placeholder="Define logic gates, context, and perceived leaks..."></textarea>
+                <div id="statusDisplay"></div>
             </div>
             <button id="execBtn" onclick="executeAnalysis()">Execute Audit</button>
             <button class="purge-btn" onclick="purgeArchive()">PURGE ARCHIVE</button>
+            
+            <div id="installGuide">
+                <span id="guideText">To install app: Tap browser menu and select "Add to Home Screen".</span>
+            </div>
         </main>
 
         <section id="history" style="margin-top: 40px;"></section>
     </div>
-<script>
-    // 1. AYARLAR: URL sonuna '/chat' eklendi.
-    const CONFIG = {
-        API_URL: "https://thecoremethodhowto-backend.onrender.com/chat",
-        TIMEOUT: 45000
-    };
 
-    // Sayfa yüklendiğinde geçmişi getir
-    window.onload = renderHistory;
-
-    // 2. ANA FONKSİYON: Execute Audit
-    window.executeAnalysis = async function() {
-        const btn = document.getElementById('execBtn');
-        const input = document.getElementById('userInput').value.trim();
-        const role = document.getElementById('expertRole').value;
-        const status = document.getElementById('statusDisplay');
-        
-        if (!input) {
-            alert("Please input a strategy signal.");
-            return;
-        }
-
-        // UI Durumu: Yükleniyor
-        btn.disabled = true;
-        btn.innerHTML = "AUDITING SIGNAL <span style='animation: blink 1s infinite'>...</span>";
-        if (status) status.textContent = "Connecting to Logic Gate...";
-        if (status) status.className = "status-msg retry-hint";
-
-        try {
-            const response = await fetch(CONFIG.API_URL, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ 
-                    user_input: input, 
-                    expert_role: role 
-                })
-            });
-
-            // Backend hatası varsa yakala
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.detail || `Server Error: ${response.status}`);
-            }
-
-            const data = await response.json();
-            const resultText = data.response;
-
-            // 3. SONUCU KAYDET VE GÖSTER
-            console.log("Audit Complete:", resultText);
-            if (status) status.textContent = "Audit Complete.";
-            if (status) status.className = "status-msg"; // Rengi normale döndür
-            
-            saveToHistory(role, input, resultText);
-
-        } catch (err) {
-            console.error("Execution Error:", err);
-            if (status) {
-                status.textContent = "Connection Failed: Engine is warming up or offline.";
-                status.className = "status-msg error";
-            }
-            alert("⚠️ Connection Error: " + err.message);
-        } finally {
-            // UI Durumu: Normale dön
-            btn.disabled = false;
-            btn.innerText = "Execute Audit";
-        }
-    };
-
-    // 4. EKSİK OLAN FONKSİYONLAR (GERİ GETİRİLDİ)
-
-    function saveToHistory(role, input, output) {
-        let history = JSON.parse(localStorage.getItem('coreHistory') || '[]');
-        const newEntry = {
-            date: new Date().toLocaleString(),
-            role: role,
-            input: input,
-            output: output
+    <script>
+        const CONFIG = {
+            API_URL: "https://thecoremethodhowto-backend.onrender.com/chat"
         };
-        // En yeni en başa
-        history.unshift(newEntry);
-        // Sadece son 10 kayıt
-        if (history.length > 10) history.pop();
-        
-        localStorage.setItem('coreHistory', JSON.stringify(history));
-        renderHistory();
-    }
 
-    function renderHistory() {
-        const historySection = document.getElementById('history');
-        const history = JSON.parse(localStorage.getItem('coreHistory') || '[]');
-        
-        if (history.length === 0) {
-            historySection.innerHTML = "<div style='text-align:center; color:#444; font-size:0.8rem;'>No signals archived.</div>";
-            return;
-        }
+        // Sayfa yüklendiğinde geçmişi yükle ve PWA kontrolü yap
+        window.onload = () => {
+            renderHistory();
+            if (!window.matchMedia('(display-mode: standalone)').matches) {
+                document.getElementById('installGuide').style.display = 'block';
+                if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
+                    document.getElementById('guideText').innerText = 'iOS: Tap "Share" and "Add to Home Screen".';
+                }
+            }
+        };
 
-        // Yeni tasarıma uygun HTML yapısı
-        historySection.innerHTML = history.map((item, index) => `
-            <div class="audit-card">
-                <div style="display:flex; justify-content:space-between; margin-bottom:10px; border-bottom:1px solid #222; padding-bottom:10px;">
-                    <span style="color:var(--neon); font-family:var(--font-mono); font-size:0.75rem;">${item.role.toUpperCase()}</span>
-                    <span style="color:#555; font-size:0.7rem;">${item.date}</span>
-                </div>
-                <div style="margin-bottom:15px; font-style:italic; color:#777; font-size:0.85rem;">
-                    "${item.input.substring(0, 80)}${item.input.length > 80 ? '...' : ''}"
-                </div>
-                <div class="audit-content">
-                    ${formatOutput(item.output)}
-                </div>
-            </div>
-        `).join('');
-    }
+        // ANA ANALİZ FONKSİYONU
+        window.executeAnalysis = async function() {
+            const btn = document.getElementById('execBtn');
+            const input = document.getElementById('userInput').value.trim();
+            const role = document.getElementById('expertRole').value;
+            const status = document.getElementById('statusDisplay');
+            
+            if (!input) {
+                alert("Signal input required.");
+                return;
+            }
 
-    // Markdown benzeri başlıkları HTML'e çeviren yardımcı fonksiyon
-    function formatOutput(text) {
-        if (!text) return "";
-        // ### Headers'ı h3 etiketiyle değiştir
-        return text.replace(/### (.*?)/g, "<h3>$1</h3>")
-                   .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
-    }
+            btn.disabled = true;
+            status.textContent = ">>> CONNECTING TO LOGIC GATE...";
+            status.className = "success";
 
-    // Buton onclick="purgeArchive()" buna bağlı
-    window.purgeArchive = function() {
-        if(confirm("SYSTEM WARNING: Purge all archived strategic signals?")) {
-            localStorage.removeItem('coreHistory');
+            try {
+                const response = await fetch(CONFIG.API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ user_input: input, expert_role: role })
+                });
+
+                if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+
+                const data = await response.json();
+                const resultText = data.response || "Error: Malformed signal.";
+
+                status.textContent = ">>> AUDIT COMPLETE.";
+                saveToHistory(role, input, resultText);
+
+            } catch (err) {
+                console.error("Critical Error:", err);
+                status.textContent = ">>> SYSTEM WAKE-UP: RETRY IN 20 SECONDS.";
+                status.className = "error";
+            } finally {
+                btn.disabled = false;
+            }
+        };
+
+        // GEÇMİŞ YÖNETİMİ
+        function saveToHistory(role, input, output) {
+            let history = JSON.parse(localStorage.getItem('coreHistory') || '[]');
+            const newEntry = {
+                date: new Date().toLocaleString(),
+                role: role,
+                input: input.substring(0, 60) + "...",
+                output: output
+            };
+            history.unshift(newEntry);
+            if (history.length > 10) history.pop();
+            localStorage.setItem('coreHistory', JSON.stringify(history));
             renderHistory();
         }
-    };
-</script>
+
+        function renderHistory() {
+            const historyBox = document.getElementById('history');
+            const history = JSON.parse(localStorage.getItem('coreHistory') || '[]');
+            
+            if (history.length === 0) {
+                historyBox.innerHTML = "<div style='text-align:center; color:#444; font-size:0.75rem;'>NO ARCHIVED SIGNALS</div>";
+                return;
+            }
+
+            historyBox.innerHTML = history.map(item => `
+                <div class="audit-card">
+                    <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:var(--neon); font-family:var(--font-mono); margin-bottom:10px; opacity:0.7;">
+                        <span>[${item.date}]</span>
+                        <span>LENS: ${item.role}</span>
+                    </div>
+                    <div style="font-size:0.85rem; color:#666; font-style:italic; margin-bottom:15px; border-left: 2px solid #222; padding-left: 10px;">
+                        "${item.input}"
+                    </div>
+                    <div class="audit-content" style="color:#fff; font-size:0.9rem; white-space:pre-wrap;">${formatMD(item.output)}</div>
+                </div>
+            `).join('');
+        }
+
+        function formatMD(text) {
+            return text.replace(/### (.*?)/g, "<h3>$1</h3>")
+                       .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+        }
+
+        window.purgeArchive = function() {
+            if(confirm("PURGE ALL ARCHIVED SIGNALS?")) {
+                localStorage.removeItem
